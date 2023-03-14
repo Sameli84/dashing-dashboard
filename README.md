@@ -1,4 +1,5 @@
 # dashing-dashboard
+
 Personal multiwidget dashboard
 
 School project for 5G00EV17-3002 Ohjelmistotuotannon jatkokurssi
