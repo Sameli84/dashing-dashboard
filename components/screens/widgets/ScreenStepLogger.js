@@ -132,15 +132,15 @@ const styles = StyleSheet.create({
 		textAlignVertical: 'center',
 		padding: 5,
 	},
-	titleView: {
-		flex: 1,
-		flexDirection: 'row',
-		margin: 5,
-	},
 	titleText: {
 		flex: 8,
 		textAlignVertical: 'center',
 		paddingLeft: 7,
+	},
+	titleView: {
+		flex: 1,
+		flexDirection: 'row',
+		margin: 5,
 	},
 });
 
