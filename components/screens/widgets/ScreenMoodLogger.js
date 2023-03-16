@@ -1,44 +1,13 @@
 import React from 'react';
 import { Button, View, Image, StyleSheet } from 'react-native';
 import { Text, Card } from 'react-native-paper';
-import SmileyCard from '../../MoodLogger/smileyCard';
+import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
 
 // screens get 'navigation' as prop from context
-const ScreenMoodLogger = ({ navigation }) => {
+const ScreenMoodLogger = ({ navigation, route }) => {
   return (
     <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#def9f4' }}>
-      <Text style={{ flex: 1, textAlignVertical: 'center', paddingLeft: 7 }} variant='headlineLarge'>
-        My Mood
-      </Text>
-      <View style={{ flex: 2, flexDirection: 'row' }}>
-        <View style={{ flex: 2, padding: 5, justifyContent: 'center', overflow: 'hidden' }}>
-          <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
-        </View>
-        <View style={{ flex: 3, flexDirection: 'column' }}>
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', overflow: 'hidden' }}>
-            <View style={{ flex: 1, padding: 5 }}>
-              <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
-            </View>
-            <View style={{ flex: 1, padding: 5 }}>
-              <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
-            </View>
-            <View style={{ flex: 1, padding: 5 }}>
-              <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
-            </View>
-          </View>
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', overflow: 'hidden' }}>
-            <View style={{ flex: 1, padding: 5 }}>
-              <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
-            </View>
-            <View style={{ flex: 1, padding: 5 }}>
-              <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
-            </View>
-            <View style={{ flex: 1, padding: 5 }}>
-              <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
-            </View>
-          </View>
-        </View>
-      </View>
+      <MoodWidgetPart navigation={navigation} route={route}></MoodWidgetPart>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
         <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
           Today

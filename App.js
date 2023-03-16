@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, Route } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ScreenDashboard from './components/screens/ScreenDashboard';
 import { Provider as PaperProvider } from 'react-native-paper';
