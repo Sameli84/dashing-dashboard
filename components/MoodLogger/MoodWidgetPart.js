@@ -1,21 +1,37 @@
 import React from 'react';
 import { Button, View, Image, StyleSheet } from 'react-native';
 import { Text, Card } from 'react-native-paper';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const MoodWidgetPart = ({ navigation, route }) => {
   return (
     <View style={{ flex: 3 }}>
-      <Text
-        style={{ flex: 1, textAlignVertical: 'center', paddingLeft: 7 }}
-        variant='headlineLarge'
-        onPress={() => {
-          if (route.name == 'Dashboard') {            
-            navigation.navigate('Mood');
-          }
-        }}
-      >
-        My Mood
-      </Text>
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        <Text
+          style={{ flex: 5, textAlignVertical: 'center', paddingLeft: 7 }}
+          variant='headlineLarge'
+          onPress={() => {
+            if (route.name == 'Dashboard') {
+              navigation.navigate('Mood');
+            }
+          }}
+        >
+          My Mood
+        </Text>
+        {route.name == 'Mood' && (
+          <Ionicons            
+            size={58}
+            name='arrow-back-circle-outline'
+            style={{ flex: 1 }}
+            title='Back'
+            onPress={() => {
+              if (route.name == 'Mood') {
+                navigation.navigate('Dashboard');
+              }
+            }}
+          ></Ionicons>
+        )}
+      </View>
       <View style={{ flex: 2, flexDirection: 'row' }}>
         <View style={{ flex: 2, padding: 5, justifyContent: 'center', overflow: 'hidden' }}>
           <Image style={styles.smiley} source={require('../../assets/acid_smiley_free_png_tomroberts101.png')} />
