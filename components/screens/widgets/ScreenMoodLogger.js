@@ -4,7 +4,7 @@ import { Text, Card } from 'react-native-paper';
 import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
 
 // screens get 'navigation' as prop from context
-const ScreenMoodLogger = ({ navigation, route }) => {
+const ScreenMoodLogger = ({ navigation, route }) => {  
   return (
     <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#def9f4' }}>
       <MoodWidgetPart navigation={navigation} route={route}></MoodWidgetPart>

@@ -1,9 +1,11 @@
-import React from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import { Button, View, Image, StyleSheet } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const MoodWidgetPart = ({ navigation, route }) => {
+  const [mood, setMood] = useState('0x1F600');
+
   return (
     <View style={{ flex: 3 }}>
       <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -45,30 +47,72 @@ const MoodWidgetPart = ({ navigation, route }) => {
               textAlign: 'center',
             }}
           >
-            &#128525;
+            {String.fromCodePoint(mood)}
           </Text>
         </View>
         <View style={{ flex: 3, flexDirection: 'column' }}>
           <View style={{ flex: 1, flexDirection: 'row', overflow: 'hidden' }}>
             <View style={{ flex: 1, padding: 5 }}>
-              <Text style={styles.smiley}>&#128512;</Text>
+              <Text
+                style={styles.smiley}
+                onPress={() => {
+                  setMood('0x1F600');
+                }}
+              >
+                &#x1F600;
+              </Text>
             </View>
             <View style={{ flex: 1, padding: 5 }}>
-              <Text style={styles.smiley}>&#128528;</Text>
+              <Text
+                style={styles.smiley}
+                onPress={() => {
+                  setMood('0x1F610');
+                }}
+              >
+                &#x1F610;
+              </Text>
             </View>
             <View style={{ flex: 1, padding: 5 }}>
-              <Text style={styles.smiley}>&#128546;</Text>
+              <Text
+                style={styles.smiley}
+                onPress={() => {
+                  setMood('0x1F622');
+                }}
+              >
+                &#x1F622;
+              </Text>
             </View>
           </View>
           <View style={{ flex: 1, flexDirection: 'row', overflow: 'hidden' }}>
             <View style={{ flex: 1, padding: 5 }}>
-              <Text style={styles.smiley}>&#128525;</Text>
+              <Text
+                style={styles.smiley}
+                onPress={() => {
+                  setMood('0x1F60D');
+                }}
+              >
+                &#x1F60D;
+              </Text>
             </View>
             <View style={{ flex: 1, padding: 5 }}>
-              <Text style={styles.smiley}>&#129395;</Text>
+              <Text
+                style={styles.smiley}
+                onPress={() => {
+                  setMood('0x1F973');
+                }}
+              >
+                &#x1F973;
+              </Text>
             </View>
             <View style={{ flex: 1, padding: 5 }}>
-              <Text style={styles.smiley}>&#128545;</Text>
+              <Text
+                style={styles.smiley}
+                onPress={() => {
+                  setMood('0x1F621');
+                }}
+              >
+                &#x1F621;
+              </Text>
             </View>
           </View>
         </View>

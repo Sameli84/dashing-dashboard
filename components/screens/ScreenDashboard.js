@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { constants } from '../../styles/style'; // feel free to add styles
