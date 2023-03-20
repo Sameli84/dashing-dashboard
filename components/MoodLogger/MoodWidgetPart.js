@@ -6,6 +6,16 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 const MoodWidgetPart = ({ navigation, route }) => {
   const [mood, setMood] = useState('0x1F600');
 
+  useEffect(() => {
+    const keepEmojiState = navigation.addListener('focus', () => {
+      // Screen was focused
+      if (route.params) {
+        setMood(route.params.moodParam);
+      }
+    });
+    return keepEmojiState;
+  });
+
   return (
     <View style={{ flex: 3 }}>
       <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -14,7 +24,9 @@ const MoodWidgetPart = ({ navigation, route }) => {
           variant='headlineLarge'
           onPress={() => {
             if (route.name == 'Dashboard') {
-              navigation.navigate('Mood');
+              navigation.navigate('Mood', {
+                moodParam: mood,
+              });
             }
           }}
         >
@@ -28,7 +40,9 @@ const MoodWidgetPart = ({ navigation, route }) => {
             title='Back'
             onPress={() => {
               if (route.name == 'Mood') {
-                navigation.navigate('Dashboard');
+                navigation.navigate('Dashboard', {
+                  moodParam: mood,
+                });
               }
             }}
           ></Ionicons>
