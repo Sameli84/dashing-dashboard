@@ -6,10 +6,11 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import ScreenSettings from './components/screens/ScreenSettings';
 import ScreenMoodLogger from './components/screens/widgets/ScreenMoodLogger';
 import { useState } from 'react';
+import './config/firebase';
 
 const Tab = createBottomTabNavigator();
 
-const App = () => {  
+const App = () => {
   return (
     // setup react-native-paper and react-navigator context
     <PaperProvider>
