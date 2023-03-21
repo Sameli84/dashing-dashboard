@@ -3,6 +3,8 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { constants } from '../../styles/style'; // feel free to add styles
 import MoodWidgetPart from '../MoodLogger/MoodWidgetPart';
+import * as backend from '../backend/backend';
+import { useEffect } from 'react';
 
 // screens get 'navigation' as prop from context
 const ScreenDashboard = ({ navigation, route }) => {
