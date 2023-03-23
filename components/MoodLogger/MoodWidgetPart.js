@@ -4,7 +4,7 @@ import { Text, Card } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const MoodWidgetPart = ({ navigation, route }) => {
-  const [mood, setMood] = useState('0x1F600');
+  const [mood, setMood] = useState({mood: '0x1F600', timeStamp: Date.now()});
 
   useEffect(() => {
     const keepEmojiState = navigation.addListener('focus', () => {
@@ -61,7 +61,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
               textAlign: 'center',
             }}
           >
-            {String.fromCodePoint(mood)}
+            {String.fromCodePoint(mood.mood)}
           </Text>
         </View>
         <View style={{ flex: 3, flexDirection: 'column' }}>
@@ -70,7 +70,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
               <Text
                 style={styles.smiley}
                 onPress={() => {
-                  setMood('0x1F600');
+                  setMood({mood: '0x1F600', timeStamp: Date.now()});
                 }}
               >
                 &#x1F600;
@@ -80,7 +80,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
               <Text
                 style={styles.smiley}
                 onPress={() => {
-                  setMood('0x1F610');
+                  setMood({mood: '0x1F610', timeStamp: Date.now()});
                 }}
               >
                 &#x1F610;
@@ -90,7 +90,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
               <Text
                 style={styles.smiley}
                 onPress={() => {
-                  setMood('0x1F622');
+                  setMood({mood: '0x1F622', timeStamp: Date.now()});
                 }}
               >
                 &#x1F622;
@@ -102,7 +102,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
               <Text
                 style={styles.smiley}
                 onPress={() => {
-                  setMood('0x1F60D');
+                  setMood({mood: '0x1F60D', timeStamp: Date.now()});
                 }}
               >
                 &#x1F60D;
@@ -112,7 +112,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
               <Text
                 style={styles.smiley}
                 onPress={() => {
-                  setMood('0x1F973');
+                  setMood({mood: '0x1F973', timeStamp: Date.now()});
                 }}
               >
                 &#x1F973;
@@ -122,7 +122,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
               <Text
                 style={styles.smiley}
                 onPress={() => {
-                  setMood('0x1F621');
+                  setMood({mood: '0x1F621', timeStamp: Date.now()});
                 }}
               >
                 &#x1F621;
