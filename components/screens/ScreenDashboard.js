@@ -4,11 +4,14 @@ import { Text } from 'react-native-paper';
 import { constants } from '../../styles/style'; // feel free to add styles
 import MoodWidgetPart from '../MoodLogger/MoodWidgetPart';
 import * as backend from '../backend/backend';
-import { useEffect } from 'react';
 
 // screens get 'navigation' as prop from context
 const ScreenDashboard = ({ navigation, route }) => {
   const userName = 'Test';
+<<<<<<< 614261bb4f6408537818a4698ae44c295e9048cc
+=======
+  backend.getTodos(); // testing backend layer here
+>>>>>>> fix: firestore backend layer works
   return (
     <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#def9f4' }}>
       <Text style={{ flex: 1, textAlignVertical: 'center', paddingLeft: 7 }} variant='headlineLarge'>
