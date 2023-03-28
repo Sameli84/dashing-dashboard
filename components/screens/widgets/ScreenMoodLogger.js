@@ -7,9 +7,17 @@ import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
 const ScreenMoodLogger = ({ navigation, route }) => {
   return (
     <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#def9f4' }}>
-      <MoodWidgetPart navigation={navigation} route={route} ></MoodWidgetPart>
+      <MoodWidgetPart navigation={navigation} route={route}></MoodWidgetPart>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
-        <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
+        <Text
+          onPress={() => {
+            navigation.navigate('MoodHistory', {
+              moodHistoryParam: 'Today',
+            });
+          }}
+          style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
+          variant='headlineMedium'
+        >
           Today
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
@@ -20,7 +28,15 @@ const ScreenMoodLogger = ({ navigation, route }) => {
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
-        <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
+        <Text
+          onPress={() => {
+            navigation.navigate('MoodHistory', {
+              moodHistoryParam: 'Yesterday',
+            });
+          }}
+          style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
+          variant='headlineMedium'
+        >
           Yesterday
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
@@ -31,7 +47,15 @@ const ScreenMoodLogger = ({ navigation, route }) => {
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
-        <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
+        <Text
+          onPress={() => {
+            navigation.navigate('MoodHistory', {
+              moodHistoryParam: 'This week',
+            });
+          }}
+          style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
+          variant='headlineMedium'
+        >
           This week
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
@@ -42,7 +66,15 @@ const ScreenMoodLogger = ({ navigation, route }) => {
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
-        <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
+        <Text
+          onPress={() => {
+            navigation.navigate('MoodHistory', {
+              moodHistoryParam: 'Last week',
+            });
+          }}
+          style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
+          variant='headlineMedium'
+        >
           Last week
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
@@ -53,7 +85,15 @@ const ScreenMoodLogger = ({ navigation, route }) => {
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
-        <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
+        <Text
+          onPress={() => {
+            navigation.navigate('MoodHistory', {
+              moodHistoryParam: 'This month',
+            });
+          }}
+          style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
+          variant='headlineMedium'
+        >
           This month
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
@@ -64,7 +104,15 @@ const ScreenMoodLogger = ({ navigation, route }) => {
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
-        <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
+        <Text
+          onPress={() => {
+            navigation.navigate('MoodHistory', {
+              moodHistoryParam: 'This year',
+            });
+          }}
+          style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
+          variant='headlineMedium'
+        >
           This year
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
@@ -75,7 +123,15 @@ const ScreenMoodLogger = ({ navigation, route }) => {
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
-        <Text style={{ flex: 5, textAlignVertical: 'center', padding: 5 }} variant='headlineMedium'>
+        <Text
+          onPress={() => {
+            navigation.navigate('MoodHistory', {
+              moodHistoryParam: 'Last year',
+            });
+          }}
+          style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
+          variant='headlineMedium'
+        >
           Last year
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>

@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { colorPalette } from './styles/theme';
 import { auth } from './config/firebase';
 import './config/firebase';
+import ScreenMoodHistory from './components/screens/widgets/ScreenMoodHistory';
 
 const Tab = createBottomTabNavigator();
 
@@ -42,6 +43,10 @@ const App = () => {
               <Tab.Screen name='Mood' component={ScreenMoodLogger} />
               <Tab.Screen name='Todo' component={ScreenTodoList} />
               <Tab.Screen name='Settings' component={ScreenSettings} />
+              <Tab.Screen name='MoodHistory' component={ScreenMoodHistory} options={{
+        tabBarButton: () => null,
+        tabBarVisible: false, // if you don't want to see the tab bar
+      }} />
             </>
           ) : (
             <>
