@@ -44,6 +44,28 @@ const deleteTodo = async (todo) => {
   }
 };
 
+// edit existing todos
+// index is required
+// you can leave other paramaters 'undefined' if you don't want to change those values
+const editTodo = async (index, deadline, priority, title) => {
+  try {
+    var todoList = await getTodos();
+    if (index >= todoList.length || index < 0 || index === undefined) {
+      console.log('Index out of bounds');
+      return;
+    } else {
+      if (deadline !== undefined) todoList[index].Deadline = deadline;
+      if (priority !== undefined) todoList[index].Priority = priority;
+      if (title !== undefined) todoList[index].Title = title;
+      await updateDoc(todosRef, {
+        TodoList: todoList,
+      });
+    }
+  } catch (e) {
+    console.log('Error while editing TodoList, reason: ', e);
+  }
+};
+
 // returns array of all documents under Feelings/uuid/Entries
 const getAllFeelings = async () => {
   try {
@@ -80,6 +102,8 @@ const getFeelingsByDate = async (date) => {
   }
 };
 
+// useful function to use inside this module
+// not callable from outside
 const getFeelingsDocumentByDate = async (date) => {
   try {
     var end = new Date(date.getTime());
@@ -103,7 +127,7 @@ const getFeelingsDocumentByDate = async (date) => {
 const addFeeling = async (date, feeling) => {
   try {
     var document = await getFeelingsDocumentByDate(date);
-    if (document == undefined) {
+    if (document === undefined) {
       // if feelingsList is undefined (empty), create new document in database
       const docRef = await addDoc(collection(db, 'Feelings/' + uuid, 'Entries'), {
         Feels: [feeling],
@@ -121,15 +145,16 @@ const addFeeling = async (date, feeling) => {
   }
 };
 
-// delete feeling of given date
+// delete feeling object of given date
+// whole feeling object must be provided, otherwise nothing happens
 const deleteFeeling = async (date, feeling) => {
   try {
     var document = await getFeelingsDocumentByDate(date);
-    if (document == undefined) {
+    if (document === undefined) {
       // no document, nothing to delete
       return;
     } else {
-      const docRef = doc(db, 'Feelings/' + uuid + '/Entries', document.id);
+      var docRef = doc(db, 'Feelings/' + uuid + '/Entries', document.id);
       await updateDoc(docRef, {
         Feels: arrayRemove(feeling),
       });
@@ -139,4 +164,32 @@ const deleteFeeling = async (date, feeling) => {
   }
 };
 
-export { getTodos, getAllFeelings, getFeelingsByDate, addTodo, deleteTodo, addFeeling, deleteFeeling };
+// edit feeling
+// date and index are required
+// mood or time can be left undefined
+const editFeeling = async (date, index, mood, time) => {
+  try {
+    const document = await getFeelingsDocumentByDate(date);
+    if (document === undefined) {
+      // no document, nothing to edit
+      return;
+    } else {
+      var feelingsList = document.data().Feels;
+      if (index >= feelingsList.length || index < 0 || index === undefined) {
+        console.log('Index out of bounds');
+        return;
+      } else {
+        if (mood !== undefined) feelingsList[index].Mood = mood;
+        if (time !== undefined) feelingsList[index].Time = time;
+        var docRef = doc(db, 'Feelings/' + uuid + '/Entries', document.id);
+        await updateDoc(docRef, {
+          Feels: feelingsList,
+        });
+      }
+    }
+  } catch (e) {
+    console.log('Error while editing Feels, reason: ', e);
+  }
+};
+
+export { getTodos, getAllFeelings, getFeelingsByDate, addTodo, deleteTodo, addFeeling, deleteFeeling, editTodo, editFeeling };
