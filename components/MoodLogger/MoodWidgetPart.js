@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: '#333333',
     fontSize: 36,
-    textAlignVertical: 'top',
+    textAlignVertical: 'center',
     textAlign: 'center',
   },
 });
