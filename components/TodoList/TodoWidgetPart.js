@@ -4,7 +4,7 @@ import { IconButton, List, Text } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 // mock data for todo list
-const todoList = [
+const mockTodoList = [
 	{
 		id: 1,
 		title: 'Get up',
@@ -63,6 +63,53 @@ const todoList = [
 
 const TodoWidgetPart = ({ navigation, route }) => {
 	const isTodo = route.name == 'Todo';
+
+	const [todoList, setTodoList] = useState(mockTodoList);
+	const [importance, setImportance] = useState(1);
+	const [complete, setComplete] = useState(false);
+
+	const toggleComplete = () => {
+		setComplete(!complete);
+	};
+
+	const toggleImportance = () => {
+		if (importance == 3) {
+			setImportance(1);
+		} else {
+			setImportance(importance + 1);
+		}
+	};
+
+	const updateTodoList = (id, title, complete, importance) => {
+		const newTodoList = todoList.map((item) => {
+			if (item.id == id) {
+				item.title = title;
+				item.complete = complete;
+				item.importance = importance;
+			}
+			return item;
+		});
+		setTodoList(newTodoList);
+	};
+
+	const deleteTodoItem = (id) => {
+		const newTodoList = todoList.filter((item) => item.id != id);
+		setTodoList(newTodoList);
+	};
+
+	const addTodoItem = (title, complete, importance) => {
+		const newTodoList = [
+			...todoList,
+			{
+				id: todoList.length + 1,
+				title: title,
+				complete: complete,
+				importance: importance,
+			},
+		];
+		setTodoList(newTodoList);
+	};
+
 	return (
 		<View style={{ flex: 3 }}>
 			<View style={{ flex: 1, flexDirection: 'row' }}>
@@ -83,6 +130,8 @@ const TodoWidgetPart = ({ navigation, route }) => {
 					style={{ flex: 1 }}
 					title='Add'
 					onPress={() => {
+						//add new todo item
+						addTodoItem(`New Todo`, false, 1);
 						console.log('add new todo');
 					}}
 				></Ionicons>
@@ -117,6 +166,7 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											icon='pencil-circle-outline'
 											size={30}
 											onPress={() => {
+												//edit todo title
 												console.log('edit pressed');
 											}}
 										/>
@@ -126,6 +176,8 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											iconColor='red'
 											size={30}
 											onPress={() => {
+												//delete todo item
+												deleteTodoItem(item.id);
 												console.log('delete pressed');
 											}}
 										/>
@@ -139,6 +191,10 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											iconColor={item.importance === 1 ? 'red' : item.importance === 2 ? 'yellow' : 'green'}
 											size={40}
 											onPress={() => {
+												setImportance(item.importance);
+												toggleImportance();
+												//edit todo importance
+												updateTodoList(item.id, item.title, item.complete, importance);
 												console.log('importance pressed');
 											}}
 										/>
@@ -148,6 +204,10 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											iconColor='blue'
 											size={40}
 											onPress={() => {
+												setComplete(item.complete);
+												toggleComplete();
+												//update todo completion
+												updateTodoList(item.id, item.title, complete, item.importance);
 												console.log('completion pressed');
 											}}
 										/>
