@@ -1,7 +1,8 @@
 import { React, useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { IconButton, List, Text } from 'react-native-paper';
+import { Button, Dialog, IconButton, List, Portal, SegmentedButtons, Text, TextInput } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as backend from '../backend/backend';
 
 // mock data for todo list
 const mockTodoList = [
@@ -63,10 +64,14 @@ const mockTodoList = [
 
 const TodoWidgetPart = ({ navigation, route }) => {
 	const isTodo = route.name == 'Todo';
-
 	const [todoList, setTodoList] = useState(mockTodoList);
 	const [importance, setImportance] = useState(1);
 	const [complete, setComplete] = useState(false);
+	const [title, setTitle] = useState('');
+	const [visible, setVisible] = useState(false);
+
+	const showDialog = () => setVisible(true);
+	const hideDialog = () => setVisible(false);
 
 	const toggleComplete = () => {
 		setComplete(!complete);
@@ -110,8 +115,46 @@ const TodoWidgetPart = ({ navigation, route }) => {
 		setTodoList(newTodoList);
 	};
 
+	const getTodoList = async () => {
+		const todoList = await backend.getTodos();
+		// setTodoList(todoList);
+		console.log(todoList);
+		console.log(typeof todoList);
+		console.log(todoList[0]);
+		console.log(todoList[0].Title);
+	};
+
 	return (
 		<View style={{ flex: 3 }}>
+			<Portal>
+				<Dialog visible={visible} onDismiss={hideDialog}>
+					<Dialog.Title>Add new todo item</Dialog.Title>
+					<Dialog.Content>
+						<TextInput label='Title' value={title} onChangeText={(title) => setTitle(title)} />
+						<Text style={{ marginTop: 10 }}>Importance</Text>
+						<SegmentedButtons
+							value={importance}
+							onValueChange={setImportance}
+							buttons={[
+								{ label: 'High', value: 1 },
+								{ label: 'Medium', value: 2 },
+								{ label: 'Low', value: 3 },
+							]}
+						/>
+					</Dialog.Content>
+					<Dialog.Actions>
+						<Button onPress={hideDialog}>Cancel</Button>
+						<Button
+							onPress={() => {
+								addTodoItem(title, false, importance);
+								hideDialog();
+							}}
+						>
+							Add
+						</Button>
+					</Dialog.Actions>
+				</Dialog>
+			</Portal>
 			<View style={{ flex: 1, flexDirection: 'row' }}>
 				<Text
 					style={{ flex: 5, textAlignVertical: 'center', paddingLeft: 7 }}
@@ -124,17 +167,7 @@ const TodoWidgetPart = ({ navigation, route }) => {
 				>
 					Todo List
 				</Text>
-				<Ionicons
-					size={58}
-					name='add-circle-outline'
-					style={{ flex: 1 }}
-					title='Add'
-					onPress={() => {
-						//add new todo item
-						addTodoItem(`New Todo`, false, 1);
-						console.log('add new todo');
-					}}
-				></Ionicons>
+				<Ionicons size={58} name='add-circle-outline' style={{ flex: 1 }} title='Add' onPress={showDialog}></Ionicons>
 				{route.name == 'Todo' && (
 					<Ionicons
 						size={58}
