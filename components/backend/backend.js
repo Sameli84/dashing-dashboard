@@ -21,7 +21,7 @@ const getTodos = async () => {
 
 // add new item to TodoList
 // todo in format {'Priority': 1, 'Title', 'Example'}
-// you can also add Deadline, but that needs to be a Date() object
+// you can also add Deadline, but that needs to be a unix timestamp
 const addTodo = async (todo) => {
   try {
     await updateDoc(todosRef, {
@@ -74,7 +74,6 @@ const getAllFeelings = async () => {
     querySnapshot.forEach((doc) => {
       feelingsData.push(doc.data());
     });
-    console.log(feelingsData);
     return feelingsData;
   } catch (e) {
     console.log('Error getting document from database, reason: ', e);
@@ -82,17 +81,25 @@ const getAllFeelings = async () => {
 };
 
 // returns one document according to given date from Feelings/uuid/Entries
+// date needs to be a unix timestamp string, i.e. Date.now()
 const getFeelingsByDate = async (date) => {
   try {
-    // we need to query database with a date range
-    var end = new Date(date.getTime());
-    end.setHours(23, 59, 59, 999);
+    // start of date
+    var start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    start = start.getTime(); // convert start date to timestamp
 
-    const q = query(collection(db, 'Feelings/' + uuid, 'Entries'), where('Time', '>=', date), where('Time', '<=', end));
+    // end of date
+    var end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+    end = end.getTime(); // convert end date to timestamp
+
+    const q = query(collection(db, 'Feelings/' + uuid, 'Entries'), where('Time', '>=', start), where('Time', '<=', end));
     const querySnapshot = await getDocs(q);
 
     // snapshot should only have one document, if it is found
     if (querySnapshot.docs.length !== 0) {
+      console.log(querySnapshot.docs[0].data().Feels);
       return querySnapshot.docs[0].data().Feels;
     } else {
       return undefined;
@@ -106,10 +113,17 @@ const getFeelingsByDate = async (date) => {
 // not callable from outside
 const getFeelingsDocumentByDate = async (date) => {
   try {
-    var end = new Date(date.getTime());
-    end.setHours(23, 59, 59, 999);
+    // start of date
+    var start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    start = start.getTime(); // convert start date into timestamp
 
-    const q = query(collection(db, 'Feelings/' + uuid, 'Entries'), where('Time', '>=', date), where('Time', '<=', end));
+    // end of date
+    var end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+    end = end.getTime(); // convert end date into timestamp
+
+    const q = query(collection(db, 'Feelings/' + uuid, 'Entries'), where('Time', '>=', start), where('Time', '<=', end));
     const querySnapshot = await getDocs(q);
 
     // snapshot should only have one document, if it is found
@@ -124,6 +138,7 @@ const getFeelingsDocumentByDate = async (date) => {
 };
 
 // add a new feeling to given date
+// date needs to be unix timestamp string i.e. Date.now()
 const addFeeling = async (date, feeling) => {
   try {
     var document = await getFeelingsDocumentByDate(date);
@@ -131,7 +146,7 @@ const addFeeling = async (date, feeling) => {
       // if feelingsList is undefined (empty), create new document in database
       const docRef = await addDoc(collection(db, 'Feelings/' + uuid, 'Entries'), {
         Feels: [feeling],
-        Time: Timestamp.fromDate(date),
+        Time: date,
       });
       console.log('Document written with ID: ', docRef.id);
     } else {
