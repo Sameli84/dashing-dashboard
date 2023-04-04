@@ -1,4 +1,4 @@
-import { doc, getDoc, getDocs, collection, query, where, updateDoc, addDoc, Timestamp, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, where, updateDoc, addDoc, arrayUnion, arrayRemove, setDoc } from 'firebase/firestore';
 import { db, auth } from '../../config/firebase';
 
 var uuid = '';
@@ -21,6 +21,7 @@ const getTodos = async () => {
     } else {
       // doc.data() will be undefined in this case
       console.log('No Todos document');
+      return undefined;
     }
   } catch (e) {
     console.log('Error getting document from database, reason: ', e);
@@ -32,9 +33,19 @@ const getTodos = async () => {
 // you can also add Deadline, but that needs to be a unix timestamp
 const addTodo = async (todo) => {
   try {
-    await updateDoc(doc(db, 'Todos', uuid), {
-      TodoList: arrayUnion(todo),
-    });
+    const todos = await getTodos(); // check if document exists
+    if (todos === undefined) {
+      // if todos is undefined (empty), create new document in database
+      await setDoc(doc(db, 'Todos/' + uuid), {
+        TodoList: [todo],
+      });
+      console.log('New document added');
+    } else {
+      // update existing document with new data
+      await updateDoc(doc(db, 'Todos', uuid), {
+        TodoList: arrayUnion(todo),
+      });
+    }
   } catch (e) {
     console.log('Error updating document, reason: ', e);
   }
