@@ -102,7 +102,7 @@ const getAllFeelings = async () => {
 };
 
 // returns one document according to given date from Feelings/uuid/Entries
-// date needs to be a unix timestamp string, i.e. Date.now()
+// date needs to be a unix timestamp number, i.e. Date.now()
 const getFeelingsByDate = async (date) => {
   try {
     // start of date
@@ -127,6 +127,35 @@ const getFeelingsByDate = async (date) => {
     }
   } catch (e) {
     console.log('Error getting document from database, reason: ', e);
+  }
+};
+
+// use date range to query feelings data
+// startDate < endDate
+// dates must be given in unix timestamp format (in milliseconds) as numbers
+const getFeelingsByDateRange = async (start, end) => {
+  try {
+    var startTime = new Date(start);
+    startTime.setHours(0, 0, 0, 0);
+    startTime = startTime.getTime();
+
+    var endTime = new Date(end);
+    endTime.setHours(23, 59, 59, 999);
+    endTime = endTime.getTime();
+
+    const q = query(collection(db, 'Feelings/' + uuid, 'Entries'), where('Time', '>=', startTime), where('Time', '<=', endTime));
+    const querySnapshot = await getDocs(q);
+
+    var feelingsData = [];
+
+    querySnapshot.docs.forEach((doc) => {
+      feelingsData.push(doc.data());
+    });
+
+    console.log(feelingsData);
+    return feelingsData;
+  } catch (e) {
+    console.log('Error getting documents from database, reason: ', e);
   }
 };
 
@@ -159,7 +188,7 @@ const getFeelingsDocumentByDate = async (date) => {
 };
 
 // add a new feeling to given date
-// date needs to be unix timestamp string i.e. Date.now()
+// date needs to be unix timestamp number i.e. Date.now()
 const addFeeling = async (date, feeling) => {
   try {
     var document = await getFeelingsDocumentByDate(date);
@@ -228,4 +257,4 @@ const editFeeling = async (date, index, mood, time) => {
   }
 };
 
-export { getTodos, getAllFeelings, getFeelingsByDate, addTodo, deleteTodo, addFeeling, deleteFeeling, editTodo, editFeeling };
+export { getTodos, getAllFeelings, getFeelingsByDate, getFeelingsByDateRange, addTodo, deleteTodo, addFeeling, deleteFeeling, editTodo, editFeeling };
