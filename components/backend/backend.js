@@ -1,14 +1,22 @@
 import { doc, getDoc, getDocs, collection, query, where, updateDoc, addDoc, Timestamp, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { db } from '../../config/firebase';
+import { db, auth } from '../../config/firebase';
 
-const uuid = 'E4a0kxFPy5hQOCf8fWKPCXBnDUi1'; // TODO: get uuid from auth
-const todosRef = doc(db, 'Todos', uuid);
+var uuid = '';
+
+// method to get uuid
+const getAuth = () => {
+  auth.onAuthStateChanged(() => {
+    uuid = auth.currentUser.uid;
+  });
+};
+getAuth(); // call function
 
 // return all document data under Todos/uuid
 const getTodos = async () => {
   try {
-    const docSnap = await getDoc(todosRef);
+    const docSnap = await getDoc(doc(db, 'Todos', uuid));
     if (docSnap.exists()) {
+      console.log(docSnap.data().TodoList);
       return docSnap.data().TodoList;
     } else {
       // doc.data() will be undefined in this case
@@ -24,7 +32,7 @@ const getTodos = async () => {
 // you can also add Deadline, but that needs to be a unix timestamp
 const addTodo = async (todo) => {
   try {
-    await updateDoc(todosRef, {
+    await updateDoc(doc(db, 'Todos', uuid), {
       TodoList: arrayUnion(todo),
     });
   } catch (e) {
@@ -36,7 +44,7 @@ const addTodo = async (todo) => {
 // whole object must be provided, otherwise nothing happens
 const deleteTodo = async (todo) => {
   try {
-    await updateDoc(todosRef, {
+    await updateDoc(doc(db, 'Todos', uuid), {
       TodoList: arrayRemove(todo),
     });
   } catch (e) {
@@ -57,7 +65,7 @@ const editTodo = async (index, deadline, priority, title) => {
       if (deadline !== undefined) todoList[index].Deadline = deadline;
       if (priority !== undefined) todoList[index].Priority = priority;
       if (title !== undefined) todoList[index].Title = title;
-      await updateDoc(todosRef, {
+      await updateDoc(doc(db, 'Todos', uuid), {
         TodoList: todoList,
       });
     }
