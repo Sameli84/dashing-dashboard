@@ -6,7 +6,9 @@ var uuid = '';
 // method to get uuid
 const getAuth = () => {
   auth.onAuthStateChanged(() => {
-    uuid = auth.currentUser.uid;
+    if (auth.currentUser) {
+      uuid = auth.currentUser.uid;
+    }
   });
 };
 getAuth(); // call function
