@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, ToastAndroid } from 'react-native';
+import { View, StyleSheet, ScrollView, ToastAndroid, Alert } from 'react-native';
 import { Button, Dialog, IconButton, List, Portal, SegmentedButtons, Text, TextInput } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as backend from '../backend/backend';
@@ -171,7 +171,16 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											iconColor='red'
 											size={30}
 											onPress={() => {
-												deleteTodoItem(index);
+												Alert.alert('Delete', 'Are you sure you want to delete this item?', [
+													{
+														text: 'Cancel',
+														style: 'cancel',
+													},
+													{
+														text: 'OK',
+														onPress: () => deleteTodoItem(index),
+													},
+												]);
 											}}
 										/>
 									</View>
