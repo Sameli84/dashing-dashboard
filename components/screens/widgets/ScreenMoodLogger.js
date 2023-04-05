@@ -1,10 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, View, Image, StyleSheet } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
+import * as backend from '../../backend/backend.js';
 
 // screens get 'navigation' as prop from context
 const ScreenMoodLogger = ({ navigation, route }) => {
+  const [moodToday, setMoodToday] = useState('0x1F600');
+  let percentageToday = '100 %';
+
+  useEffect(() => {
+    const asyncFn = async () => {
+      const today = await backend.getFeelingsByDate(new Date());
+      console.log(today[0]);
+      const total = Date.now() - today[0].timeStamp;
+      console.log(total);
+
+      let feels = {
+        '0x1F600': 0,
+        '0x1F610': 0,
+        '0x1F622': 0,
+        '0x1F60D': 0,
+        '0x1F973': 0,
+        '0x1F621': 0,
+      };
+
+      for (let index = 0; index < today.length; index++) {
+        if (index < today.length - 1) {          
+          feels[today[index].mood] = +(today[index + 1].timeStamp - today[index].timeStamp);
+          console.log(feels);
+          console.log(index);
+        } else {
+          feels[today[index].mood] = +(Date.now() - today[index].timeStamp);          
+        }
+      }
+      console.log(feels);
+      const moodStore = Object.keys(feels).reduce((a, b) => (feels[a] > feels[b] ? a : b));
+      setMoodToday(moodStore);
+      console.log(((feels[moodStore] / total) * 100).toFixed(0).toString() + ' %');
+    };
+    asyncFn();
+  });
+
   return (
     <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#def9f4' }}>
       <MoodWidgetPart navigation={navigation} route={route}></MoodWidgetPart>
@@ -21,10 +58,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           Today
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          100 %
+          {percentageToday}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
+          <Text style={styles.smiley}>{String.fromCodePoint(moodToday)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -151,6 +188,9 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 15,
     backgroundColor: '#333333',
+    fontSize: 36,
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
 });
 
