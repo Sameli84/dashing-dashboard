@@ -106,12 +106,12 @@ const getAllFeelings = async () => {
 const getFeelingsByDate = async (date) => {
   try {
     // start of date
-    var start = new Date(date);
+    let start = new Date(date);
     start.setHours(0, 0, 0, 0);
     start = start.getTime(); // convert start date to timestamp
 
     // end of date
-    var end = new Date(date);
+    let end = new Date(date);
     end.setHours(23, 59, 59, 999);
     end = end.getTime(); // convert end date to timestamp
 
@@ -120,7 +120,6 @@ const getFeelingsByDate = async (date) => {
 
     // snapshot should only have one document, if it is found
     if (querySnapshot.docs.length !== 0) {
-      console.log(querySnapshot.docs[0].data().Feels);
       return querySnapshot.docs[0].data().Feels;
     } else {
       return undefined;
@@ -135,11 +134,11 @@ const getFeelingsByDate = async (date) => {
 // dates must be given in unix timestamp format (in milliseconds) as numbers
 const getFeelingsByDateRange = async (start, end) => {
   try {
-    var startTime = new Date(start);
+    let startTime = new Date(start);
     startTime.setHours(0, 0, 0, 0);
     startTime = startTime.getTime();
 
-    var endTime = new Date(end);
+    let endTime = new Date(end);
     endTime.setHours(23, 59, 59, 999);
     endTime = endTime.getTime();
 
@@ -151,7 +150,6 @@ const getFeelingsByDateRange = async (start, end) => {
     querySnapshot.docs.forEach((doc) => {
       feelingsData.push(doc.data());
     });
-
     return feelingsData;
   } catch (e) {
     console.log('Error getting documents from database, reason: ', e);
@@ -163,12 +161,12 @@ const getFeelingsByDateRange = async (start, end) => {
 const getFeelingsDocumentByDate = async (date) => {
   try {
     // start of date
-    var start = new Date(date);
+    let start = new Date(date);
     start.setHours(0, 0, 0, 0);
     start = start.getTime(); // convert start date into timestamp
 
     // end of date
-    var end = new Date(date);
+    let end = new Date(date);
     end.setHours(23, 59, 59, 999);
     end = end.getTime(); // convert end date into timestamp
 
@@ -190,7 +188,7 @@ const getFeelingsDocumentByDate = async (date) => {
 // date needs to be unix timestamp number i.e. Date.now()
 const addFeeling = async (date, feeling) => {
   try {
-    var document = await getFeelingsDocumentByDate(date);
+    const document = await getFeelingsDocumentByDate(date);
     if (document === undefined) {
       // if feelingsList is undefined (empty), create new document in database
       await setDoc(doc(db, 'Feelings', uuid), {}); // initialize empty doc
@@ -213,7 +211,7 @@ const addFeeling = async (date, feeling) => {
 // whole feeling object must be provided, otherwise nothing happens
 const deleteFeeling = async (date, feeling) => {
   try {
-    var document = await getFeelingsDocumentByDate(date);
+    const document = await getFeelingsDocumentByDate(date);
     if (document === undefined) {
       // no document, nothing to delete
       return;
