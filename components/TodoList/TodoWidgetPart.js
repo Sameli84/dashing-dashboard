@@ -1,140 +1,92 @@
-import { React, useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { React, useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, ToastAndroid } from 'react-native';
 import { Button, Dialog, IconButton, List, Portal, SegmentedButtons, Text, TextInput } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as backend from '../backend/backend';
 
-// mock data for todo list
-const mockTodoList = [
-	{
-		id: 1,
-		title: 'Get up',
-		complete: true,
-		importance: 1,
-	},
-	{
-		id: 2,
-		title: 'Go to work',
-		complete: false,
-		importance: 2,
-	},
-	{
-		id: 3,
-		title: 'Go home',
-		complete: true,
-		importance: 3,
-	},
-	{
-		id: 4,
-		title: 'Get up',
-		complete: true,
-		importance: 1,
-	},
-	{
-		id: 5,
-		title: 'Go to work',
-		complete: false,
-		importance: 2,
-	},
-	{
-		id: 6,
-		title: 'Go homeGo homeGo homeGo home',
-		complete: true,
-		importance: 3,
-	},
-	{
-		id: 7,
-		title: 'Get up',
-		complete: true,
-		importance: 1,
-	},
-	{
-		id: 8,
-		title: 'Go to work',
-		complete: false,
-		importance: 2,
-	},
-	{
-		id: 9,
-		title: 'Go home',
-		complete: true,
-		importance: 3,
-	},
-];
-
 const TodoWidgetPart = ({ navigation, route }) => {
 	const isTodo = route.name == 'Todo';
-	const [todoList, setTodoList] = useState(mockTodoList);
-	const [importance, setImportance] = useState(1);
+	const [todoList, setTodoList] = useState([]);
+	const [priority, setPriority] = useState(1);
 	const [complete, setComplete] = useState(false);
 	const [title, setTitle] = useState('');
 	const [visible, setVisible] = useState(false);
+	const [edit, setEdit] = useState(false);
+	const [index, setIndex] = useState(-1);
 
-	const showDialog = () => setVisible(true);
-	const hideDialog = () => setVisible(false);
+	const showAddDialog = () => setVisible(true);
+	const showEditDialog = () => {
+		setEdit(true);
+		setVisible(true);
+	};
+	const hideDialog = () => {
+		setEdit(false);
+		setVisible(false);
+		setIndex(-1);
+	};
 
 	const toggleComplete = () => {
 		setComplete(!complete);
 	};
 
-	const toggleImportance = () => {
-		if (importance == 3) {
-			setImportance(1);
+	const togglePriority = () => {
+		if (priority == 3) {
+			setPriority(1);
 		} else {
-			setImportance(importance + 1);
+			setPriority(priority + 1);
 		}
 	};
 
-	const updateTodoList = (id, title, complete, importance) => {
+	const updateTodoList = (id, title, complete, priority) => {
 		const newTodoList = todoList.map((item) => {
 			if (item.id == id) {
 				item.title = title;
 				item.complete = complete;
-				item.importance = importance;
+				item.priority = priority;
 			}
 			return item;
 		});
 		setTodoList(newTodoList);
 	};
 
-	const deleteTodoItem = (id) => {
-		const newTodoList = todoList.filter((item) => item.id != id);
-		setTodoList(newTodoList);
+	const addTodoItem = async (title, complete, priority) => {
+		await backend.addTodo({
+			Priority: priority,
+			Title: title,
+		});
+		getTodoList();
 	};
 
-	const addTodoItem = (title, complete, importance) => {
-		const newTodoList = [
-			...todoList,
-			{
-				id: todoList.length + 1,
-				title: title,
-				complete: complete,
-				importance: importance,
-			},
-		];
-		setTodoList(newTodoList);
+	const deleteTodoItem = async (index) => {
+		await backend.deleteTodo(todoList[index]);
+		getTodoList();
+	};
+
+	const editTodoItem = async (index, title, complete, priority) => {
+		await backend.editTodo(index, undefined, priority, title);
+		getTodoList();
 	};
 
 	const getTodoList = async () => {
 		const todoList = await backend.getTodos();
-		// setTodoList(todoList);
-		console.log(todoList);
-		console.log(typeof todoList);
-		console.log(todoList[0]);
-		console.log(todoList[0].Title);
+		setTodoList(todoList);
 	};
+
+	useEffect(() => {
+		getTodoList();
+	}, []);
 
 	return (
 		<View style={{ flex: 3 }}>
 			<Portal>
 				<Dialog visible={visible} onDismiss={hideDialog}>
-					<Dialog.Title>Add new todo item</Dialog.Title>
+					<Dialog.Title>{edit ? 'Edit' : 'Add new'} todo item</Dialog.Title>
 					<Dialog.Content>
 						<TextInput label='Title' value={title} onChangeText={(title) => setTitle(title)} />
-						<Text style={{ marginTop: 10 }}>Importance</Text>
+						<Text style={{ marginTop: 10 }}>Priority</Text>
 						<SegmentedButtons
-							value={importance}
-							onValueChange={setImportance}
+							value={priority}
+							onValueChange={setPriority}
 							buttons={[
 								{ label: 'High', value: 1 },
 								{ label: 'Medium', value: 2 },
@@ -146,11 +98,13 @@ const TodoWidgetPart = ({ navigation, route }) => {
 						<Button onPress={hideDialog}>Cancel</Button>
 						<Button
 							onPress={() => {
-								addTodoItem(title, false, importance);
+								{
+									edit ? editTodoItem(index, title, complete, priority) : addTodoItem(title, complete, priority);
+								}
 								hideDialog();
 							}}
 						>
-							Add
+							{edit ? 'Save' : 'Add'}
 						</Button>
 					</Dialog.Actions>
 				</Dialog>
@@ -167,7 +121,18 @@ const TodoWidgetPart = ({ navigation, route }) => {
 				>
 					Todo List
 				</Text>
-				<Ionicons size={58} name='add-circle-outline' style={{ flex: 1 }} title='Add' onPress={showDialog}></Ionicons>
+				<Ionicons
+					size={58}
+					name='add-circle-outline'
+					style={{ flex: 1 }}
+					title='Add'
+					onPress={() => {
+						setTitle('');
+						setComplete(false);
+						setPriority(1);
+						showAddDialog();
+					}}
+				></Ionicons>
 				{route.name == 'Todo' && (
 					<Ionicons
 						size={58}
@@ -186,11 +151,11 @@ const TodoWidgetPart = ({ navigation, route }) => {
 			<View style={[{ flex: 2 }, isTodo && { flex: 9 }]}>
 				<List.Section>
 					<ScrollView>
-						{todoList.map((item) => (
+						{todoList.map((item, index) => (
 							<List.Item
-								key={item.id}
+								key={index}
 								style={styles.itemView}
-								title={item.title}
+								title={item.Title}
 								titleStyle={styles.titleText}
 								description={(props) => (
 									<View style={{ flexDirection: 'row' }}>
@@ -199,8 +164,11 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											icon='pencil-circle-outline'
 											size={30}
 											onPress={() => {
-												//edit todo title
-												console.log('edit pressed');
+												setIndex(index);
+												setTitle(item.Title);
+												setComplete(item.Complete);
+												setPriority(item.Priority);
+												showEditDialog();
 											}}
 										/>
 										<IconButton
@@ -209,9 +177,7 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											iconColor='red'
 											size={30}
 											onPress={() => {
-												//delete todo item
-												deleteTodoItem(item.id);
-												console.log('delete pressed');
+												deleteTodoItem(index);
 											}}
 										/>
 									</View>
@@ -221,14 +187,14 @@ const TodoWidgetPart = ({ navigation, route }) => {
 										<IconButton
 											{...props}
 											icon='circle-slice-8'
-											iconColor={item.importance === 1 ? 'red' : item.importance === 2 ? 'yellow' : 'green'}
+											iconColor={item.Priority === 1 ? 'red' : item.Priority === 2 ? 'yellow' : 'green'}
 											size={40}
 											onPress={() => {
-												setImportance(item.importance);
-												toggleImportance();
-												//edit todo importance
-												updateTodoList(item.id, item.title, item.complete, importance);
-												console.log('importance pressed');
+												setPriority(item.priority);
+												togglePriority();
+												//edit todo priority
+												updateTodoList(item.id, item.title, item.complete, priority);
+												console.log('priority pressed');
 											}}
 										/>
 										<IconButton
@@ -240,14 +206,14 @@ const TodoWidgetPart = ({ navigation, route }) => {
 												setComplete(item.complete);
 												toggleComplete();
 												//update todo completion
-												updateTodoList(item.id, item.title, complete, item.importance);
+												updateTodoList(item.id, item.title, complete, item.priority);
 												console.log('completion pressed');
 											}}
 										/>
 									</View>
 								)}
 								onPress={() => {
-									console.log('item pressed');
+									ToastAndroid.show(item.Title, ToastAndroid.SHORT);
 								}}
 							/>
 						))}
@@ -269,7 +235,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 	},
 	titleText: {
-		fontSize: 28,
+		fontSize: 24,
 	},
 });
 
