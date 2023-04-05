@@ -54,16 +54,19 @@ const TodoWidgetPart = ({ navigation, route }) => {
 			Priority: priority,
 			Title: title,
 		});
+		ToastAndroid.show('Todo added', ToastAndroid.SHORT);
 		getTodoList();
 	};
 
 	const deleteTodoItem = async (index) => {
 		await backend.deleteTodo(todoList[index]);
+		ToastAndroid.show('Todo deleted', ToastAndroid.SHORT);
 		getTodoList();
 	};
 
 	const editTodoItem = async (index, title, complete, priority) => {
 		await backend.editTodo(index, undefined, priority, title);
+		ToastAndroid.show('Todo edited', ToastAndroid.SHORT);
 		getTodoList();
 	};
 
@@ -190,11 +193,9 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											iconColor={item.Priority === 1 ? 'red' : item.Priority === 2 ? 'yellow' : 'green'}
 											size={40}
 											onPress={() => {
-												setPriority(item.priority);
+												setPriority(item.Priority);
 												togglePriority();
-												//edit todo priority
-												updateTodoList(item.id, item.title, item.complete, priority);
-												console.log('priority pressed');
+												editTodoItem(index, item.Title, item.complete, priority);
 											}}
 										/>
 										<IconButton
@@ -206,8 +207,7 @@ const TodoWidgetPart = ({ navigation, route }) => {
 												setComplete(item.complete);
 												toggleComplete();
 												//update todo completion
-												updateTodoList(item.id, item.title, complete, item.priority);
-												console.log('completion pressed');
+												updateTodoList(index, item.title, complete, item.priority);
 											}}
 										/>
 									</View>
