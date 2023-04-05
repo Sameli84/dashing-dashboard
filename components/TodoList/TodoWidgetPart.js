@@ -37,21 +37,10 @@ const TodoWidgetPart = ({ navigation, route }) => {
 		}
 	};
 
-	const updateTodoList = (id, title, complete, priority) => {
-		const newTodoList = todoList.map((item) => {
-			if (item.id == id) {
-				item.title = title;
-				item.complete = complete;
-				item.priority = priority;
-			}
-			return item;
-		});
-		setTodoList(newTodoList);
-	};
-
 	const addTodoItem = async (title, complete, priority) => {
 		await backend.addTodo({
 			Priority: priority,
+			Complete: complete,
 			Title: title,
 		});
 		ToastAndroid.show('Todo added', ToastAndroid.SHORT);
@@ -65,14 +54,16 @@ const TodoWidgetPart = ({ navigation, route }) => {
 	};
 
 	const editTodoItem = async (index, title, complete, priority) => {
-		await backend.editTodo(index, undefined, priority, title);
+		await backend.editTodo(index, undefined, priority, complete, title);
 		ToastAndroid.show('Todo edited', ToastAndroid.SHORT);
 		getTodoList();
 	};
 
 	const getTodoList = async () => {
 		const todoList = await backend.getTodos();
-		setTodoList(todoList);
+		if (todoList !== undefined) {
+			setTodoList(todoList);
+		}
 	};
 
 	useEffect(() => {
@@ -102,7 +93,7 @@ const TodoWidgetPart = ({ navigation, route }) => {
 						<Button
 							onPress={() => {
 								{
-									edit ? editTodoItem(index, title, complete, priority) : addTodoItem(title, complete, priority);
+									edit ? editTodoItem(index, title, undefined, priority) : addTodoItem(title, false, priority);
 								}
 								hideDialog();
 							}}
@@ -195,19 +186,18 @@ const TodoWidgetPart = ({ navigation, route }) => {
 											onPress={() => {
 												setPriority(item.Priority);
 												togglePriority();
-												editTodoItem(index, item.Title, item.complete, priority);
+												editTodoItem(index, undefined, undefined, priority);
 											}}
 										/>
 										<IconButton
 											{...props}
-											icon={item.complete ? 'check-circle' : 'circle-outline'}
+											icon={item.Complete ? 'check-circle' : 'circle-outline'}
 											iconColor='blue'
 											size={40}
 											onPress={() => {
-												setComplete(item.complete);
+												setComplete(item.Complete);
 												toggleComplete();
-												//update todo completion
-												updateTodoList(index, item.title, complete, item.priority);
+												editTodoItem(index, undefined, complete, undefined);
 											}}
 										/>
 									</View>
