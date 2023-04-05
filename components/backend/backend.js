@@ -121,6 +121,7 @@ const getFeelingsByDate = async (date) => {
 
     // snapshot should only have one document, if it is found
     if (querySnapshot.docs.length !== 0) {
+      console.log(querySnapshot.docs[0].data().Feels);
       return querySnapshot.docs[0].data().Feels;
     } else {
       return undefined;
@@ -191,7 +192,6 @@ const addFeeling = async (date, feeling) => {
   try {
     const document = await getFeelingsDocumentByDate(date);
     if (document === undefined) {
-      console.log("doc was undef")
       // if feelingsList is undefined (empty), create new document in database
       await setDoc(doc(db, 'Feelings', uuid), {}); // initialize empty doc
       await addDoc(collection(db, 'Feelings/' + uuid, 'Entries'), {

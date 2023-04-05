@@ -19,7 +19,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
   });
 
   useEffect(() => {
-    backend.addFeeling(new Date(mood.timeStamp), mood);
+    backend.addFeeling(Date.now(), mood);
   })
 
   return (
