@@ -152,7 +152,6 @@ const getFeelingsByDateRange = async (start, end) => {
       feelingsData.push(doc.data());
     });
 
-    console.log(feelingsData);
     return feelingsData;
   } catch (e) {
     console.log('Error getting documents from database, reason: ', e);
@@ -194,11 +193,11 @@ const addFeeling = async (date, feeling) => {
     var document = await getFeelingsDocumentByDate(date);
     if (document === undefined) {
       // if feelingsList is undefined (empty), create new document in database
-      const docRef = await addDoc(collection(db, 'Feelings/' + uuid, 'Entries'), {
+      await setDoc(doc(db, 'Feelings', uuid), {}); // initialize empty doc
+      await addDoc(collection(db, 'Feelings/' + uuid, 'Entries'), {
         Feels: [feeling],
         Time: date,
       });
-      console.log('Document written with ID: ', docRef.id);
     } else {
       const docRef = doc(db, 'Feelings/' + uuid + '/Entries', document.id);
       await updateDoc(docRef, {
