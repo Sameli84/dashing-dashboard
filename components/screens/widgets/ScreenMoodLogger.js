@@ -8,6 +8,12 @@ import * as backend from '../../backend/backend.js';
 const ScreenMoodLogger = ({ navigation, route }) => {
   const [moodToday, setMoodToday] = useState('0x1F600');
   const [moodYesterday, setMoodYesterday] = useState('0x1F600');
+  const [moodThisWeek, setMoodThisWeek] = useState('0x1F600');
+  const [moodLastWeek, setMoodLastWeek] = useState('0x1F600');
+  const [moodThisMonth, setMoodThisMonth] = useState('0x1F600');
+  const [moodThisYear, setMoodThisYear] = useState('0x1F600');
+  const [moodLastYear, setMoodLastYear] = useState('0x1F600');
+
   let percentageToday = '100 %';
 
   useEffect(() => {
@@ -39,13 +45,13 @@ const ScreenMoodLogger = ({ navigation, route }) => {
 
       const moodStore = Object.keys(feels).reduce((a, b) => (feels[a] > feels[b] ? a : b));
       setMoodToday(moodStore);
-      console.log((feels[moodStore] / total * 100).toFixed(0).toString() + " %");
+      console.log(((feels[moodStore] / total) * 100).toFixed(0).toString() + ' %');
     };
     asyncToday();
   });
 
-  const asyncYesterday = async (start, end, setMood) => {
-    const data = await backend.getFeelingsByDateRange(start, end);    
+  const getMoodHistory = async (start, end, setMood) => {
+    const data = await backend.getFeelingsByDateRange(start, end);
     console.log(data);
     const entries = data[0].Feels;
     entries.sort((a, b) => parseInt(a.timeStamp) - parseInt(b.timeStamp));
@@ -62,9 +68,9 @@ const ScreenMoodLogger = ({ navigation, route }) => {
 
     for (let index = 0; index < entries.length; index++) {
       if (index < entries.length - 1) {
-        feels[entries[index].mood] += (entries[index + 1].timeStamp - entries[index].timeStamp);
+        feels[entries[index].mood] += entries[index + 1].timeStamp - entries[index].timeStamp;
       } else {
-        feels[entries[index].mood] += (end - entries[index].timeStamp);
+        feels[entries[index].mood] += end - entries[index].timeStamp;
       }
     }
 
@@ -81,8 +87,30 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   const yesterdayStart = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(0, 0, 0, 0);
   const yesterdayEnd = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(23, 59, 59, 999);
 
+  function getMonday(d) {
+    d = new Date(d);
+    var day = d.getDay(),
+      diff = d.getDate() - day + (day == 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+  }
+
+  const weekInMilliSeconds = 604800000;
+
+  const firstDayOfMonth = new Date(new Date().setDate(1)).setHours(0, 0, 0, 0);
+
+  const firstDayOfYear = new Date().setFullYear(new Date().getFullYear(), 0, 1);
+  const firstDayOfYearInMillis = new Date(firstDayOfYear).setHours(0, 0, 0, 0);
+
+  const firstDayOfLastYear = new Date().setFullYear(new Date().getFullYear()-1, 0, 1);
+  const firstDayOfLastYearInMillis = new Date(firstDayOfLastYear).setHours(0, 0, 0, 0);
+
   useEffect(() => {
-    asyncYesterday(yesterdayStart, yesterdayEnd, setMoodYesterday);
+    getMoodHistory(yesterdayStart, yesterdayEnd, setMoodYesterday);
+    getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0), new Date(), setMoodThisWeek);
+    getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0) - weekInMilliSeconds, getMonday(new Date()).setHours(0, 0, 0, 0), setMoodLastWeek);
+    getMoodHistory(firstDayOfMonth, new Date(), setMoodThisMonth);
+    getMoodHistory(firstDayOfYearInMillis, new Date(), setMoodThisYear);
+    getMoodHistory(firstDayOfLastYearInMillis, firstDayOfYearInMillis, setMoodLastYear);
   }, []);
 
   return (
@@ -142,7 +170,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           60 %
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
+          <Text style={styles.smiley}>{String.fromCodePoint(moodThisWeek)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -161,7 +189,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           65 %
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
+          <Text style={styles.smiley}>{String.fromCodePoint(moodLastWeek)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -180,7 +208,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           48 %
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
+          <Text style={styles.smiley}>{String.fromCodePoint(moodThisMonth)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -199,7 +227,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           38 %
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
+        <Text style={styles.smiley}>{String.fromCodePoint(moodThisYear)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -218,7 +246,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           42 %
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Image style={styles.smiley} source={require('../../../assets/acid_smiley_free_png_tomroberts101.png')} />
+          <Text style={styles.smiley}>{String.fromCodePoint(moodLastYear)}</Text>
         </View>
       </View>
     </View>
