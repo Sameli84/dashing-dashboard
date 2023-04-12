@@ -6,19 +6,19 @@ import * as backend from '../../backend/backend.js';
 
 // screens get 'navigation' as prop from context
 const ScreenMoodLogger = ({ navigation, route }) => {
-  const [moodToday, setMoodToday] = useState('0x1F600');
-  const [moodYesterday, setMoodYesterday] = useState('0x1F600');
-  const [moodThisWeek, setMoodThisWeek] = useState('0x1F600');
-  const [moodLastWeek, setMoodLastWeek] = useState('0x1F600');
-  const [moodThisMonth, setMoodThisMonth] = useState('0x1F600');
-  const [moodThisYear, setMoodThisYear] = useState('0x1F600');
-  const [moodLastYear, setMoodLastYear] = useState('0x1F600');
+  const [moodToday, setMoodToday] = useState({ mood: '0x1F600', percentage: '100 %' });
+  const [moodYesterday, setMoodYesterday] = useState({ mood: '0x1F600', percentage: '100 %' });
+  const [moodThisWeek, setMoodThisWeek] = useState({ mood: '0x1F600', percentage: '100 %' });
+  const [moodLastWeek, setMoodLastWeek] = useState({ mood: '0x1F600', percentage: '100 %' });
+  const [moodThisMonth, setMoodThisMonth] = useState({ mood: '0x1F600', percentage: '100 %' });
+  const [moodThisYear, setMoodThisYear] = useState({ mood: '0x1F600', percentage: '100 %' });
+  const [moodLastYear, setMoodLastYear] = useState({ mood: '0x1F600', percentage: '100 %' });
 
   const getMoodHistory = async (start, end, setMood) => {
     const data = await backend.getFeelingsByDateRange(start, end);
-    console.log(data);
-    const entries = data[0].Feels;
-    entries.sort((a, b) => parseInt(a.timeStamp) - parseInt(b.timeStamp));
+    if (data.length == 0) {
+      return;
+    }
     let total = 0;
 
     let feels = {
@@ -30,22 +30,26 @@ const ScreenMoodLogger = ({ navigation, route }) => {
       '0x1F621': 0,
     };
 
-    for (let index = 0; index < entries.length; index++) {
-      if (index < entries.length - 1) {
-        feels[entries[index].mood] += entries[index + 1].timeStamp - entries[index].timeStamp;
-      } else {
-        feels[entries[index].mood] += end - entries[index].timeStamp;
+    data.forEach((element) => {
+      for (let index = 0; index < element.Feels.length; index++) {
+        if (index < element.Feels.length - 1) {
+          feels[element.Feels[index].mood] += element.Feels[index + 1].timeStamp - element.Feels[index].timeStamp;
+        } else {
+          if (setMood != setMoodToday) {
+            feels[element.Feels[index].mood] += 900000;
+          }
+        }
       }
-    }
+    });
 
     for (let [key, value] of Object.entries(feels)) {
       total += value;
     }
 
     const moodStore = Object.keys(feels).reduce((a, b) => (feels[a] > feels[b] ? a : b));
-
-    setMood(moodStore);
+    setMood({ mood: moodStore, percentage: ((feels[moodStore] / total) * 100).toFixed(0).toString() + ' %' });
     console.log(((feels[moodStore] / total) * 100).toFixed(0).toString() + ' %');
+    console.log(feels);
   };
 
   const yesterdayStart = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(0, 0, 0, 0);
@@ -65,20 +69,24 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   const firstDayOfYear = new Date().setFullYear(new Date().getFullYear(), 0, 1);
   const firstDayOfYearInMillis = new Date(firstDayOfYear).setHours(0, 0, 0, 0);
 
-  const firstDayOfLastYear = new Date().setFullYear(new Date().getFullYear()-1, 0, 1);
+  const firstDayOfLastYear = new Date().setFullYear(new Date().getFullYear() - 1, 0, 1);
   const firstDayOfLastYearInMillis = new Date(firstDayOfLastYear).setHours(0, 0, 0, 0);
 
   useEffect(() => {
     getMoodHistory(yesterdayStart, yesterdayEnd, setMoodYesterday);
-    getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0), new Date(), setMoodThisWeek);
-    getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0) - weekInMilliSeconds, getMonday(new Date()).setHours(0, 0, 0, 0), setMoodLastWeek);
-    getMoodHistory(firstDayOfMonth, new Date(), setMoodThisMonth);
-    getMoodHistory(firstDayOfYearInMillis, new Date(), setMoodThisYear);
+    getMoodHistory(getMonday(new Date() - weekInMilliSeconds).setHours(0, 0, 0, 0), getMonday(new Date()).setHours(0, 0, 0, 0), setMoodLastWeek);
     getMoodHistory(firstDayOfLastYearInMillis, firstDayOfYearInMillis, setMoodLastYear);
   }, []);
 
   useEffect(() => {
-    getMoodHistory(yesterdayEnd, Date.now(), setMoodToday);
+    const moodToday = navigation.addListener('focus', () => {
+      // Screen was focused
+      getMoodHistory(yesterdayEnd, Date.now(), setMoodToday);
+      getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0), new Date(), setMoodThisWeek);
+      getMoodHistory(firstDayOfMonth, Date.now(), setMoodThisMonth);
+      getMoodHistory(firstDayOfYearInMillis, Date.now(), setMoodThisYear);
+    });
+    return moodToday;
   });
 
   return (
@@ -97,10 +105,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           Today
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          100 %
+          {moodToday.percentage}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Text style={styles.smiley}>{String.fromCodePoint(moodToday)}</Text>
+          <Text style={styles.smiley}>{String.fromCodePoint(moodToday.mood)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -116,10 +124,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           Yesterday
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          85 %
+          {moodYesterday.percentage}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Text style={styles.smiley}>{String.fromCodePoint(moodYesterday)}</Text>
+          <Text style={styles.smiley}>{String.fromCodePoint(moodYesterday.mood)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -135,10 +143,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           This week
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          60 %
+          {moodThisWeek.percentage}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Text style={styles.smiley}>{String.fromCodePoint(moodThisWeek)}</Text>
+          <Text style={styles.smiley}>{String.fromCodePoint(moodThisWeek.mood)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -154,10 +162,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           Last week
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          65 %
+          {moodLastWeek.percentage}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Text style={styles.smiley}>{String.fromCodePoint(moodLastWeek)}</Text>
+          <Text style={styles.smiley}>{String.fromCodePoint(moodLastWeek.mood)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -173,10 +181,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           This month
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          48 %
+          {moodThisMonth.percentage}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Text style={styles.smiley}>{String.fromCodePoint(moodThisMonth)}</Text>
+          <Text style={styles.smiley}>{String.fromCodePoint(moodThisMonth.mood)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -192,10 +200,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           This year
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          38 %
+          {moodThisYear.percentage}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-        <Text style={styles.smiley}>{String.fromCodePoint(moodThisYear)}</Text>
+          <Text style={styles.smiley}>{String.fromCodePoint(moodThisYear.mood)}</Text>
         </View>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -211,10 +219,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           Last year
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          42 %
+          {moodLastYear.percentage}
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
-          <Text style={styles.smiley}>{String.fromCodePoint(moodLastYear)}</Text>
+          <Text style={styles.smiley}>{String.fromCodePoint(moodLastYear.mood)}</Text>
         </View>
       </View>
     </View>
