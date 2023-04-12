@@ -1,17 +1,9 @@
 import { React, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
-import * as Font from 'expo-font';
 import { constants } from '../../styles/style';
 
 const Aphorisms = () => {
-  useEffect(() => {
-    (async () =>
-      await Font.loadAsync({
-        MorrisRoman: require('../../assets/fonts/MorrisRoman-Black.ttf'),
-      }))();
-  }, []);
-
   const [aphorism, setAphorism] = useState({ q: 'Inspiration incoming...', a: '' });
 
   const options = {
@@ -29,7 +21,7 @@ const Aphorisms = () => {
     };
     asyncToday();
   }, []);
-
+  
   return (
     <View style={{ marginTop: constants.SPACER_2, flex: 3 }}>
       <View style={{ flex: 1 }}>
@@ -37,7 +29,7 @@ const Aphorisms = () => {
           Inspiration of the Day
         </Text>
       </View>
-      <View style={{ flex: 2 }}>
+      <View style={{ flex: 3 }}>
         <Text style={{ textAlignVertical: 'center', paddingLeft: 7, fontFamily: 'MorrisRoman', fontSize: 30}} >
           {aphorism['q']}
         </Text>

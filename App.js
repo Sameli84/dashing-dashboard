@@ -13,6 +13,7 @@ import { colorPalette } from './styles/theme';
 import { auth } from './config/firebase';
 import './config/firebase';
 import ScreenMoodHistory from './components/screens/widgets/ScreenMoodHistory';
+import * as Font from 'expo-font';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +31,13 @@ const App = () => {
       setIsSignedIn(user); // true, false
     });
     return unsubscribe; // stop listening
+  }, []);
+
+  useEffect(() => {
+    (async () =>
+      await Font.loadAsync({
+        MorrisRoman: require('./assets/fonts/MorrisRoman-Black.ttf'),
+      }))();
   }, []);
 
   return (
