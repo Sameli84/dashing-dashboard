@@ -2,6 +2,7 @@ import { React, useState, useEffect, useRef } from 'react';
 import { Button, View, Image, StyleSheet } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { constants } from '../../styles/style.js';
 
 import * as backend from '../backend/backend.js';
 
@@ -23,7 +24,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
   })
 
   return (
-    <View style={{ flex: 3 }}>
+    <View style={{ marginBottom: constants.SPACER_2, flex: 3 }}>
       <View style={{ flex: 1, flexDirection: 'row' }}>
         <Text
           style={{ flex: 5, textAlignVertical: 'center', paddingLeft: 7 }}
