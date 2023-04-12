@@ -14,42 +14,6 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   const [moodThisYear, setMoodThisYear] = useState('0x1F600');
   const [moodLastYear, setMoodLastYear] = useState('0x1F600');
 
-  let percentageToday = '100 %';
-
-  useEffect(() => {
-    const asyncToday = async () => {
-      const today = await backend.getFeelingsByDate(Date.now());
-      today.sort((a, b) => parseInt(a.timeStamp) - parseInt(b.timeStamp));
-      let total = 0;
-
-      let feels = {
-        '0x1F600': 0,
-        '0x1F610': 0,
-        '0x1F622': 0,
-        '0x1F60D': 0,
-        '0x1F973': 0,
-        '0x1F621': 0,
-      };
-
-      for (let index = 0; index < today.length; index++) {
-        if (index < today.length - 1) {
-          feels[today[index].mood] += today[index + 1].timeStamp - today[index].timeStamp;
-        } else {
-          feels[today[index].mood] += Date.now() - today[index].timeStamp;
-        }
-      }
-
-      for (let [key, value] of Object.entries(feels)) {
-        total += value;
-      }
-
-      const moodStore = Object.keys(feels).reduce((a, b) => (feels[a] > feels[b] ? a : b));
-      setMoodToday(moodStore);
-      console.log(((feels[moodStore] / total) * 100).toFixed(0).toString() + ' %');
-    };
-    asyncToday();
-  });
-
   const getMoodHistory = async (start, end, setMood) => {
     const data = await backend.getFeelingsByDateRange(start, end);
     console.log(data);
@@ -113,6 +77,10 @@ const ScreenMoodLogger = ({ navigation, route }) => {
     getMoodHistory(firstDayOfLastYearInMillis, firstDayOfYearInMillis, setMoodLastYear);
   }, []);
 
+  useEffect(() => {
+    getMoodHistory(yesterdayEnd, Date.now(), setMoodToday);
+  });
+
   return (
     <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#def9f4' }}>
       <MoodWidgetPart navigation={navigation} route={route}></MoodWidgetPart>
@@ -129,7 +97,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           Today
         </Text>
         <Text style={{ flex: 3, textAlignVertical: 'center' }} variant='headlineMedium'>
-          {percentageToday}
+          100 %
         </Text>
         <View style={{ flex: 2, justifyContent: 'center', overflow: 'hidden', padding: 2 }}>
           <Text style={styles.smiley}>{String.fromCodePoint(moodToday)}</Text>
