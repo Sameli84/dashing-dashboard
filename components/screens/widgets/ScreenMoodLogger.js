@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, View, Image, StyleSheet } from 'react-native';
-import { Text, Card } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Text, } from 'react-native-paper';
 import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
 import * as backend from '../../backend/backend.js';
 
@@ -14,6 +14,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   const [moodThisYear, setMoodThisYear] = useState({ mood: '0x1F600', percentage: '100 %' });
   const [moodLastYear, setMoodLastYear] = useState({ mood: '0x1F600', percentage: '100 %' });
 
+  // Get mood entries from backend within time range and set visible moods with useState hook
   const getMoodHistory = async (start, end, setMood) => {
     const data = await backend.getFeelingsByDateRange(start, end);
     if (data.length == 0) {
@@ -30,6 +31,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
       '0x1F621': 0,
     };
 
+    // Go through entries received from backend
     data.forEach((element) => {
       for (let index = 0; index < element.Feels.length; index++) {
         if (index < element.Feels.length - 1) {
@@ -46,21 +48,21 @@ const ScreenMoodLogger = ({ navigation, route }) => {
       total += value;
     }
 
+    // Get most prominent mood for time range and set it with hook
     const moodStore = Object.keys(feels).reduce((a, b) => (feels[a] > feels[b] ? a : b));
     setMood({ mood: moodStore, percentage: ((feels[moodStore] / total) * 100).toFixed(0).toString() + ' %' });
-    console.log(((feels[moodStore] / total) * 100).toFixed(0).toString() + ' %');
-    console.log(feels);
   };
 
-  const yesterdayStart = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(0, 0, 0, 0);
-  const yesterdayEnd = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(23, 59, 59, 999);
-
+  // Starting and ending timestamps for different time ranges
   function getMonday(d) {
     d = new Date(d);
     var day = d.getDay(),
       diff = d.getDate() - day + (day == 0 ? -6 : 1);
     return new Date(d.setDate(diff));
   }
+  
+  const yesterdayStart = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(0, 0, 0, 0);
+  const yesterdayEnd = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(23, 59, 59, 999);
 
   const weekInMilliSeconds = 604800000;
 
@@ -72,15 +74,16 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   const firstDayOfLastYear = new Date().setFullYear(new Date().getFullYear() - 1, 0, 1);
   const firstDayOfLastYearInMillis = new Date(firstDayOfLastYear).setHours(0, 0, 0, 0);
 
+  // Set historical moods, only needs to be done once
   useEffect(() => {
     getMoodHistory(yesterdayStart, yesterdayEnd, setMoodYesterday);
     getMoodHistory(getMonday(new Date() - weekInMilliSeconds).setHours(0, 0, 0, 0), getMonday(new Date()).setHours(0, 0, 0, 0), setMoodLastWeek);
     getMoodHistory(firstDayOfLastYearInMillis, firstDayOfYearInMillis, setMoodLastYear);
   }, []);
 
+  // Set mood histories that still change when screen is focused on
   useEffect(() => {
     const moodToday = navigation.addListener('focus', () => {
-      // Screen was focused
       getMoodHistory(yesterdayEnd, Date.now(), setMoodToday);
       getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0), new Date(), setMoodThisWeek);
       getMoodHistory(firstDayOfMonth, Date.now(), setMoodThisMonth);
