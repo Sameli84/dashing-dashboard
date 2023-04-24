@@ -21,7 +21,7 @@ const MoodWidgetPart = ({ navigation, route }) => {
 
   useEffect(() => {
     backend.addFeeling(Date.now(), mood);
-  })
+  }, [mood]);
 
   return (
     <View style={{ marginBottom: constants.SPACER_2, flex: 3 }}>
