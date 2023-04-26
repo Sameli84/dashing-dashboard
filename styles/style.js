@@ -12,7 +12,7 @@ export const constants = {
   BORDER_WIDTH: 2,
   INPUT_BORDER_RADIUS: 15,
   // colors
-  COLOR_WHITE: '#fafafa',
+  COLOR_WHITE: '#ffffff',
   COLOR_BLACK: '#333333',
   COLOR_BORDER: '#bababa',
   COLOR_ACTION: '#10de81', // eg. primary button background color, maybe useless because of Native Paper
@@ -23,19 +23,19 @@ export default StyleSheet.create({
   containerCenterAligned: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    padding: 20,
+    backgroundColor: constants.COLOR_WHITE,
+    padding: constants.SPACER_2,
   },
   containerLeftAligned: {
     flex: 1,
     alignItems: 'flex-start',
-    backgroundColor: '#ffffff',
-    padding: 20,
+    backgroundColor: constants.COLOR_WHITE,
+    padding: constants.SPACER_2,
   },
   footerView: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: constants.SPACER_2,
   },
   link: {
     color: '#788eec',

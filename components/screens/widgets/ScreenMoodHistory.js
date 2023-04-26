@@ -2,6 +2,7 @@ import { React, useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { constants } from '../../../styles/style';
 
 const ScreenMoodHistory = ({ navigation, route }) => {
   const [period, setPeriod] = useState('Today');
@@ -14,7 +15,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
   const [angryPercentage, setAngryPercentage] = useState('Loading...');
 
   useEffect(() => {
-    console.log(route.params.moodHistoryRange)
+    console.log(route.params.moodHistoryRange);
     if (route.params) {
       setPeriod(route.params.moodHistoryParam);
       let feels = route.params.moodHistoryRange;
@@ -22,8 +23,8 @@ const ScreenMoodHistory = ({ navigation, route }) => {
       for (let [key, value] of Object.entries(feels)) {
         total += value;
       }
-      console.log(total)
-      console.log(route.params.moodHistoryRange)
+      console.log(total);
+      console.log(route.params.moodHistoryRange);
       setHappyPercentage(((feels['0x1F600'] / total) * 100).toFixed(0).toString() + ' %');
       setBlankPercentage(((feels['0x1F610'] / total) * 100).toFixed(0).toString() + ' %');
       setSadPercentage(((feels['0x1F622'] / total) * 100).toFixed(0).toString() + ' %');
@@ -34,7 +35,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
   });
 
   return (
-    <View style={{ flex: 14, backgroundColor: '#def9f4' }}>
+    <View style={{ flex: 14, backgroundColor: constants.COLOR_WHITE }}>
       <View style={{ flex: 2, flexDirection: 'row' }}>
         <Text style={{ flex: 5, textAlignVertical: 'center', paddingLeft: 7 }} variant='headlineLarge'>
           My Mood {period}
@@ -49,7 +50,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           }}
         ></Ionicons>
       </View>
-      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <View style={{ flex: 1, padding: 5 }}>
           <Text style={styles.smiley}>&#x1F600;</Text>
         </View>
@@ -57,7 +58,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           {happyPercentage}
         </Text>
       </View>
-      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <View style={{ flex: 1, padding: 5 }}>
           <Text style={styles.smiley}>&#x1F610;</Text>
         </View>
@@ -65,7 +66,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           {blankPercentage}
         </Text>
       </View>
-      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <View style={{ flex: 1, padding: 5 }}>
           <Text style={styles.smiley}>&#x1F622;</Text>
         </View>
@@ -73,7 +74,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           {sadPercentage}
         </Text>
       </View>
-      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <View style={{ flex: 1, padding: 5 }}>
           <Text style={styles.smiley}>&#x1F60D;</Text>
         </View>
@@ -81,7 +82,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           {lovePercentage}
         </Text>
       </View>
-      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <View style={{ flex: 1, padding: 5 }}>
           <Text style={styles.smiley}>&#x1F973;</Text>
         </View>
@@ -89,7 +90,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           {partyPercentage}
         </Text>
       </View>
-      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <View style={{ flex: 1, padding: 5 }}>
           <Text style={styles.smiley}>&#x1F621;</Text>
         </View>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
   smiley: {
     width: '100%',
     height: '100%',
-    borderRadius: 15,
+    borderRadius: constants.INPUT_BORDER_RADIUS,
     backgroundColor: '#333333',
     fontSize: 36,
     textAlignVertical: 'center',
