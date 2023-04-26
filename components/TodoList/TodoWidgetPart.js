@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, ToastAndroid, Alert } from 'react-native'
 import { Button, Dialog, IconButton, List, Portal, SegmentedButtons, Text, TextInput } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as backend from '../backend/backend';
+import { useIsFocused } from '@react-navigation/native';
 
 const TodoWidgetPart = ({ navigation, route }) => {
   const isTodo = route.name == 'Todo';
@@ -13,6 +14,7 @@ const TodoWidgetPart = ({ navigation, route }) => {
   const [visible, setVisible] = useState(false);
   const [edit, setEdit] = useState(false);
   const [index, setIndex] = useState(-1);
+  const isFocused = useIsFocused();
 
   const showAddDialog = () => setVisible(true);
   const showEditDialog = () => {
@@ -67,8 +69,10 @@ const TodoWidgetPart = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    getTodoList();
-  }, []);
+    if (isFocused) {
+      getTodoList();
+    }
+  }, [navigation, isFocused]);
 
   return (
     <View style={{ flex: 3 }}>
