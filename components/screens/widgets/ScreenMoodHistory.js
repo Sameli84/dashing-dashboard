@@ -1,50 +1,36 @@
-import { React, useState, useEffect, useRef } from 'react';
-import { Button, View, Image, StyleSheet } from 'react-native';
-import { Text, Card } from 'react-native-paper';
+import { React, useState, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const ScreenMoodHistory = ({ navigation, route }) => {
   const [period, setPeriod] = useState('Today');
-  const [feels, setFeels] = useState({
-    '0x1F600': 0,
-    '0x1F610': 0,
-    '0x1F622': 0,
-    '0x1F60D': 0,
-    '0x1F973': 0,
-    '0x1F621': 0,
-  });
+
   const [happyPercentage, setHappyPercentage] = useState('Loading...');
   const [blankPercentage, setBlankPercentage] = useState('Loading...');
-  const [sadPercentage, setSadPercentage] = useState('60%');
-  const [lovePercentage, setLovePercentage] = useState('60%');
-  const [partyPercentage, setPartyPercentage] = useState('60%');
-  const [angryPercentage, setAngryPercentage] = useState('60%');
-  let total = 0;
-  useEffect(() => {
-    const getPeriod = navigation.addListener('focus', () => {
-      const fetchData = async () => {
-        if (route.params) {
-          setPeriod(route.params.moodHistoryParam);
-          setFeels(route.params.moodHistoryRange);
-        }
-        console.log(feels);
-        for (let [key, value] of Object.entries(feels)) {
-          total += value;
-        }        
-      };
+  const [sadPercentage, setSadPercentage] = useState('Loading...');
+  const [lovePercentage, setLovePercentage] = useState('Loading...');
+  const [partyPercentage, setPartyPercentage] = useState('Loading...');
+  const [angryPercentage, setAngryPercentage] = useState('Loading...');
 
-      const exampleSecond = async () => {
-        await fetchData();
-        setHappyPercentage(((feels['0x1F600'] / total) * 100).toFixed(0).toString() + ' %');
-        setBlankPercentage(((feels['0x1F610'] / total) * 100).toFixed(0).toString() + ' %');
-        setSadPercentage(((feels['0x1F622'] / total) * 100).toFixed(0).toString() + ' %');
-        setLovePercentage(((feels['0x1F60D'] / total) * 100).toFixed(0).toString() + ' %');
-        setPartyPercentage(((feels['0x1F973'] / total) * 100).toFixed(0).toString() + ' %');
-        setAngryPercentage(((feels['0x1F621'] / total) * 100).toFixed(0).toString() + ' %');
-      };
-      exampleSecond();
-    });
-    return getPeriod;
+  useEffect(() => {
+    console.log(route.params.moodHistoryRange)
+    if (route.params) {
+      setPeriod(route.params.moodHistoryParam);
+      let feels = route.params.moodHistoryRange;
+      let total = 0;
+      for (let [key, value] of Object.entries(feels)) {
+        total += value;
+      }
+      console.log(total)
+      console.log(route.params.moodHistoryRange)
+      setHappyPercentage(((feels['0x1F600'] / total) * 100).toFixed(0).toString() + ' %');
+      setBlankPercentage(((feels['0x1F610'] / total) * 100).toFixed(0).toString() + ' %');
+      setSadPercentage(((feels['0x1F622'] / total) * 100).toFixed(0).toString() + ' %');
+      setLovePercentage(((feels['0x1F60D'] / total) * 100).toFixed(0).toString() + ' %');
+      setPartyPercentage(((feels['0x1F973'] / total) * 100).toFixed(0).toString() + ' %');
+      setAngryPercentage(((feels['0x1F621'] / total) * 100).toFixed(0).toString() + ' %');
+    }
   });
 
   return (

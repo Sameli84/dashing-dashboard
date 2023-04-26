@@ -5,6 +5,19 @@ import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
 import * as backend from '../../backend/backend.js';
 
 // screens get 'navigation' as prop from context
+let feels = { today: {}, yesterday: {}, thisWeek: {}, lastWeek: {}, thisMonth: {}, thisYear: {}, lastYear: {} };
+
+for (let key in feels) {
+  feels[key] = {
+    '0x1F600': 0,
+    '0x1F610': 0,
+    '0x1F622': 0,
+    '0x1F60D': 0,
+    '0x1F973': 0,
+    '0x1F621': 0,
+  };
+}
+
 const ScreenMoodLogger = ({ navigation, route }) => {
   const [moodToday, setMoodToday] = useState({ mood: '0x1F600', percentage: '100 %' });
   const [moodYesterday, setMoodYesterday] = useState({ mood: '0x1F600', percentage: '100 %' });
@@ -13,18 +26,6 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   const [moodThisMonth, setMoodThisMonth] = useState({ mood: '0x1F600', percentage: '100 %' });
   const [moodThisYear, setMoodThisYear] = useState({ mood: '0x1F600', percentage: '100 %' });
   const [moodLastYear, setMoodLastYear] = useState({ mood: '0x1F600', percentage: '100 %' });
-
-  let feels = { today: {}, yesterday: {}, thisWeek: {}, lastWeek: {}, thisMonth: {}, thisYear: {}, lastYear: {} };
-  for (let key in feels) {
-    feels[key] = {
-      '0x1F600': 0,
-      '0x1F610': 0,
-      '0x1F622': 0,
-      '0x1F60D': 0,
-      '0x1F973': 0,
-      '0x1F621': 0,
-    };
-  }
 
   // Get mood entries from backend within time range and set visible moods with useState hook
   const getMoodHistory = async (start, end, setMood, feels) => {
