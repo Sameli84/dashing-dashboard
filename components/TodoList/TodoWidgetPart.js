@@ -4,6 +4,8 @@ import { Button, Dialog, IconButton, List, Portal, SegmentedButtons, Text, TextI
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as backend from '../backend/backend';
 import { useIsFocused } from '@react-navigation/native';
+import { constants } from '../../styles/style';
+import { colorPalette } from '../../styles/theme';
 
 const TodoWidgetPart = ({ navigation, route }) => {
   const isTodo = route.name == 'Todo';
@@ -77,10 +79,16 @@ const TodoWidgetPart = ({ navigation, route }) => {
   return (
     <View style={{ flex: 3 }}>
       <Portal>
-        <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog visible={visible} onDismiss={hideDialog} style={{ backgroundColor: constants.COLOR_WHITE }}>
           <Dialog.Title>{edit ? 'Edit' : 'Add new'} todo item</Dialog.Title>
           <Dialog.Content>
-            <TextInput label='Title' value={title} onChangeText={(title) => setTitle(title)} />
+            <TextInput
+              mode='outlined'
+              label='Title'
+              outlineStyle={{ borderRadius: constants.INPUT_BORDER_RADIUS }}
+              value={title}
+              onChangeText={(title) => setTitle(title)}
+            />
             <Text style={{ marginTop: 10 }}>Priority</Text>
             <SegmentedButtons
               value={priority}
@@ -95,6 +103,14 @@ const TodoWidgetPart = ({ navigation, route }) => {
           <Dialog.Actions>
             <Button onPress={hideDialog}>Cancel</Button>
             <Button
+              style={{
+                borderRadius: constants.INPUT_BORDER_RADIUS,
+                paddingBottom: constants.SPACER_1,
+                paddingTop: constants.SPACER_1,
+                marginTop: constants.SPACER_2,
+                width: 100,
+              }}
+              mode='contained'
               onPress={() => {
                 {
                   edit ? editTodoItem(index, title, undefined, priority) : addTodoItem(title, false, priority);

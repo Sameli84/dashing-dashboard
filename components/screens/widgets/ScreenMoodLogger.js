@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
 import * as backend from '../../backend/backend.js';
+import { constants } from '../../../styles/style';
 
 // screens get 'navigation' as prop from context
 let feels = { today: {}, yesterday: {}, thisWeek: {}, lastWeek: {}, thisMonth: {}, thisYear: {}, lastYear: {} };
@@ -102,9 +103,9 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   });
 
   return (
-    <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#def9f4' }}>
+    <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#ffffff', padding: constants.SPACER_2 }}>
       <MoodWidgetPart navigation={navigation} route={route}></MoodWidgetPart>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <Text
           onPress={() => {
             navigation.navigate('MoodHistory', {
@@ -124,7 +125,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           <Text style={styles.smiley}>{String.fromCodePoint(moodToday.mood)}</Text>
         </View>
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <Text
           onPress={() => {
             navigation.navigate('MoodHistory', {
@@ -144,7 +145,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           <Text style={styles.smiley}>{String.fromCodePoint(moodYesterday.mood)}</Text>
         </View>
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <Text
           onPress={() => {
             navigation.navigate('MoodHistory', {
@@ -164,7 +165,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           <Text style={styles.smiley}>{String.fromCodePoint(moodThisWeek.mood)}</Text>
         </View>
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <Text
           onPress={() => {
             navigation.navigate('MoodHistory', {
@@ -184,7 +185,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           <Text style={styles.smiley}>{String.fromCodePoint(moodLastWeek.mood)}</Text>
         </View>
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <Text
           onPress={() => {
             navigation.navigate('MoodHistory', {
@@ -204,7 +205,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           <Text style={styles.smiley}>{String.fromCodePoint(moodThisMonth.mood)}</Text>
         </View>
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <Text
           onPress={() => {
             navigation.navigate('MoodHistory', {
@@ -224,7 +225,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           <Text style={styles.smiley}>{String.fromCodePoint(moodThisYear.mood)}</Text>
         </View>
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: constants.INPUT_BORDER_RADIUS }}>
         <Text
           onPress={() => {
             navigation.navigate('MoodHistory', {
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
   smiley: {
     width: '100%',
     height: '100%',
-    borderRadius: 15,
+    borderRadius: constants.INPUT_BORDER_RADIUS,
     backgroundColor: '#333333',
     fontSize: 36,
     textAlignVertical: 'center',
