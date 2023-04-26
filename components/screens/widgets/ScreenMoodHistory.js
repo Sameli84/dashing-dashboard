@@ -5,13 +5,44 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 const ScreenMoodHistory = ({ navigation, route }) => {
   const [period, setPeriod] = useState('Today');
-
+  const [feels, setFeels] = useState({
+    '0x1F600': 0,
+    '0x1F610': 0,
+    '0x1F622': 0,
+    '0x1F60D': 0,
+    '0x1F973': 0,
+    '0x1F621': 0,
+  });
+  const [happyPercentage, setHappyPercentage] = useState('Loading...');
+  const [blankPercentage, setBlankPercentage] = useState('Loading...');
+  const [sadPercentage, setSadPercentage] = useState('60%');
+  const [lovePercentage, setLovePercentage] = useState('60%');
+  const [partyPercentage, setPartyPercentage] = useState('60%');
+  const [angryPercentage, setAngryPercentage] = useState('60%');
+  let total = 0;
   useEffect(() => {
     const getPeriod = navigation.addListener('focus', () => {
-      // Screen was focused
-      if (route.params) {
-        setPeriod(route.params.moodHistoryParam);
-      }
+      const fetchData = async () => {
+        if (route.params) {
+          setPeriod(route.params.moodHistoryParam);
+          setFeels(route.params.moodHistoryRange);
+        }
+        console.log(feels);
+        for (let [key, value] of Object.entries(feels)) {
+          total += value;
+        }        
+      };
+
+      const exampleSecond = async () => {
+        await fetchData();
+        setHappyPercentage(((feels['0x1F600'] / total) * 100).toFixed(0).toString() + ' %');
+        setBlankPercentage(((feels['0x1F610'] / total) * 100).toFixed(0).toString() + ' %');
+        setSadPercentage(((feels['0x1F622'] / total) * 100).toFixed(0).toString() + ' %');
+        setLovePercentage(((feels['0x1F60D'] / total) * 100).toFixed(0).toString() + ' %');
+        setPartyPercentage(((feels['0x1F973'] / total) * 100).toFixed(0).toString() + ' %');
+        setAngryPercentage(((feels['0x1F621'] / total) * 100).toFixed(0).toString() + ' %');
+      };
+      exampleSecond();
     });
     return getPeriod;
   });
@@ -37,7 +68,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           <Text style={styles.smiley}>&#x1F600;</Text>
         </View>
         <Text style={{ flex: 5, padding: 5, textAlignVertical: 'center', textAlign: 'right' }} variant='headlineMedium'>
-          52%
+          {happyPercentage}
         </Text>
       </View>
       <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -45,7 +76,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           <Text style={styles.smiley}>&#x1F610;</Text>
         </View>
         <Text style={{ flex: 5, padding: 5, textAlignVertical: 'center', textAlign: 'right' }} variant='headlineMedium'>
-          52%
+          {blankPercentage}
         </Text>
       </View>
       <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -53,7 +84,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           <Text style={styles.smiley}>&#x1F622;</Text>
         </View>
         <Text style={{ flex: 5, padding: 5, textAlignVertical: 'center', textAlign: 'right' }} variant='headlineMedium'>
-          52%
+          {sadPercentage}
         </Text>
       </View>
       <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -61,7 +92,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           <Text style={styles.smiley}>&#x1F60D;</Text>
         </View>
         <Text style={{ flex: 5, padding: 5, textAlignVertical: 'center', textAlign: 'right' }} variant='headlineMedium'>
-          52%
+          {lovePercentage}
         </Text>
       </View>
       <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -69,7 +100,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           <Text style={styles.smiley}>&#x1F973;</Text>
         </View>
         <Text style={{ flex: 5, padding: 5, textAlignVertical: 'center', textAlign: 'right' }} variant='headlineMedium'>
-          52%
+          {partyPercentage}
         </Text>
       </View>
       <View style={{ flex: 2, flexDirection: 'row', backgroundColor: '#85d3c5', margin: 5, borderRadius: 10 }}>
@@ -77,7 +108,7 @@ const ScreenMoodHistory = ({ navigation, route }) => {
           <Text style={styles.smiley}>&#x1F621;</Text>
         </View>
         <Text style={{ flex: 5, padding: 5, textAlignVertical: 'center', textAlign: 'right' }} variant='headlineMedium'>
-          52%
+          {angryPercentage}
         </Text>
       </View>
     </View>

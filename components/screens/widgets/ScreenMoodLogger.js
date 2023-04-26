@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import MoodWidgetPart from '../../MoodLogger/MoodWidgetPart';
 import * as backend from '../../backend/backend.js';
 
@@ -14,15 +14,9 @@ const ScreenMoodLogger = ({ navigation, route }) => {
   const [moodThisYear, setMoodThisYear] = useState({ mood: '0x1F600', percentage: '100 %' });
   const [moodLastYear, setMoodLastYear] = useState({ mood: '0x1F600', percentage: '100 %' });
 
-  // Get mood entries from backend within time range and set visible moods with useState hook
-  const getMoodHistory = async (start, end, setMood) => {
-    const data = await backend.getFeelingsByDateRange(start, end);
-    if (data.length == 0) {
-      return;
-    }
-    let total = 0;
-
-    let feels = {
+  let feels = { today: {}, yesterday: {}, thisWeek: {}, lastWeek: {}, thisMonth: {}, thisYear: {}, lastYear: {} };
+  for (let key in feels) {
+    feels[key] = {
       '0x1F600': 0,
       '0x1F610': 0,
       '0x1F622': 0,
@@ -30,6 +24,15 @@ const ScreenMoodLogger = ({ navigation, route }) => {
       '0x1F973': 0,
       '0x1F621': 0,
     };
+  }
+
+  // Get mood entries from backend within time range and set visible moods with useState hook
+  const getMoodHistory = async (start, end, setMood, feels) => {
+    const data = await backend.getFeelingsByDateRange(start, end);
+    if (data.length == 0) {
+      return;
+    }
+    let total = 0;
 
     // Go through entries received from backend
     data.forEach((element) => {
@@ -60,7 +63,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
       diff = d.getDate() - day + (day == 0 ? -6 : 1);
     return new Date(d.setDate(diff));
   }
-  
+
   const yesterdayStart = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(0, 0, 0, 0);
   const yesterdayEnd = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(23, 59, 59, 999);
 
@@ -76,18 +79,23 @@ const ScreenMoodLogger = ({ navigation, route }) => {
 
   // Set historical moods, only needs to be done once
   useEffect(() => {
-    getMoodHistory(yesterdayStart, yesterdayEnd, setMoodYesterday);
-    getMoodHistory(getMonday(new Date() - weekInMilliSeconds).setHours(0, 0, 0, 0), getMonday(new Date()).setHours(0, 0, 0, 0), setMoodLastWeek);
-    getMoodHistory(firstDayOfLastYearInMillis, firstDayOfYearInMillis, setMoodLastYear);
+    getMoodHistory(yesterdayStart, yesterdayEnd, setMoodYesterday, feels.yesterday);
+    getMoodHistory(
+      getMonday(new Date() - weekInMilliSeconds).setHours(0, 0, 0, 0),
+      getMonday(new Date()).setHours(0, 0, 0, 0),
+      setMoodLastWeek,
+      feels.lastWeek
+    );
+    getMoodHistory(firstDayOfLastYearInMillis, firstDayOfYearInMillis, setMoodLastYear, feels.lastYear);
   }, []);
 
   // Set mood histories that still change when screen is focused on
   useEffect(() => {
     const moodToday = navigation.addListener('focus', () => {
-      getMoodHistory(yesterdayEnd, Date.now(), setMoodToday);
-      getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0), new Date(), setMoodThisWeek);
-      getMoodHistory(firstDayOfMonth, Date.now(), setMoodThisMonth);
-      getMoodHistory(firstDayOfYearInMillis, Date.now(), setMoodThisYear);
+      getMoodHistory(yesterdayEnd, Date.now(), setMoodToday, feels.today);
+      getMoodHistory(getMonday(new Date()).setHours(0, 0, 0, 0), new Date(), setMoodThisWeek, feels.thisWeek);
+      getMoodHistory(firstDayOfMonth, Date.now(), setMoodThisMonth, feels.thisMonth);
+      getMoodHistory(firstDayOfYearInMillis, Date.now(), setMoodThisYear, feels.thisYear);
     });
     return moodToday;
   });
@@ -100,6 +108,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           onPress={() => {
             navigation.navigate('MoodHistory', {
               moodHistoryParam: 'Today',
+              moodHistoryRange: feels.today,
             });
           }}
           style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
@@ -119,6 +128,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           onPress={() => {
             navigation.navigate('MoodHistory', {
               moodHistoryParam: 'Yesterday',
+              moodHistoryRange: feels.yesterday,
             });
           }}
           style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
@@ -138,6 +148,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           onPress={() => {
             navigation.navigate('MoodHistory', {
               moodHistoryParam: 'This week',
+              moodHistoryRange: feels.thisWeek,
             });
           }}
           style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
@@ -157,6 +168,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           onPress={() => {
             navigation.navigate('MoodHistory', {
               moodHistoryParam: 'Last week',
+              moodHistoryRange: feels.lastWeek,
             });
           }}
           style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
@@ -176,6 +188,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           onPress={() => {
             navigation.navigate('MoodHistory', {
               moodHistoryParam: 'This month',
+              moodHistoryRange: feels.thisMonth,
             });
           }}
           style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
@@ -195,6 +208,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           onPress={() => {
             navigation.navigate('MoodHistory', {
               moodHistoryParam: 'This year',
+              moodHistoryRange: feels.thisYear,
             });
           }}
           style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
@@ -214,6 +228,7 @@ const ScreenMoodLogger = ({ navigation, route }) => {
           onPress={() => {
             navigation.navigate('MoodHistory', {
               moodHistoryParam: 'Last year',
+              moodHistoryRange: feels.lastYear,
             });
           }}
           style={{ flex: 5, textAlignVertical: 'center', padding: 5 }}
