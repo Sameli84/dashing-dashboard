@@ -3,10 +3,10 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPasswo
 
 describe('User creation and login with firebase', () => {
   let uuid;
+  const email = process.env.JEST_USER_EMAIL;
+  const password = process.env.JEST_USER_PASSWORD;
 
   test('should create a new user', async () => {
-    const email = process.env.JEST_USER_EMAIL;
-    const password = process.env.JEST_USER_PASSWORD;
     expect(auth.currentUser?.uid).toBeFalsy();
 
     const response = await createUserWithEmailAndPassword(auth, email, password);
@@ -19,12 +19,16 @@ describe('User creation and login with firebase', () => {
       displayName: 'Test User',
     });
     expect(auth.currentUser?.displayName).toEqual('Test User');
+    auth.signOut();
+  });
+
+  test('should not create a new user with the same email', async () => {
+    expect(auth.currentUser?.uid).toBeFalsy();
+    await expect(createUserWithEmailAndPassword(auth, email, password)).rejects.toThrow('Firebase: Error (auth/email-already-in-use).');
+    expect(auth.currentUser).toBeFalsy();
   });
 
   test('should login with valid credentials', async () => {
-    const email = process.env.JEST_USER_EMAIL;
-    const password = process.env.JEST_USER_PASSWORD;
-
     const userCredentials = await signInWithEmailAndPassword(auth, email, password);
     expect(userCredentials.user.email).toEqual(email);
     expect(userCredentials.user.uid).toEqual(uuid);
@@ -32,9 +36,6 @@ describe('User creation and login with firebase', () => {
   });
 
   test('should not login to a nonexistent user', async () => {
-    const email = process.env.JEST_USER_EMAIL;
-    const password = process.env.JEST_USER_PASSWORD;
-
     await expect(signInWithEmailAndPassword(auth, email, password)).rejects.toThrow('Firebase: Error (auth/user-not-found).');
     expect(auth.currentUser).toBeFalsy();
   });
