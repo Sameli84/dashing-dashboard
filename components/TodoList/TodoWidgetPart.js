@@ -154,7 +154,7 @@ const TodoWidgetPart = ({ navigation, route }) => {
                 key={index}
                 style={styles.itemView}
                 title={item.Title}
-                titleStyle={styles.titleText}
+                titleStyle={!item.Complete ? styles.titleText : styles.titleTextDone}
                 description={(props) => (
                   <View style={{ flexDirection: 'row' }}>
                     <IconButton
@@ -239,6 +239,10 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 24,
+  },
+  titleTextDone: {
+    fontSize: 24,
+    textDecorationLine: 'line-through',
   },
 });
 
